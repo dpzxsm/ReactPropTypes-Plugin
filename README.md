@@ -3,6 +3,7 @@
 ![img](./ScreenShot.gif)
 
 ## Download Url
+<a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a>
 
 ## 中文:
 
@@ -10,7 +11,7 @@
 
 #### 如何使用
 1. 选择组件名称
-2. 按下shift + command + P 或者 command + N 在列表中选择PropTypesGenerate
+2. 按下shift + alt + command + P 或者 command + N 在列表中选择PropTypesGenerate
 3. 编辑弹框中的表格进行类型的修改稿
 
 #### 提示
@@ -24,7 +25,7 @@ This is a IDEA plug-in for automatically generates PropTypes code , which curren
 
 #### How to use
 1. Select your Component's name
-2. Press shift + command + P or command + N show generate List and select PropTypesGenerate
+2. Press shift + alt + command + P or command + N show generate List and select PropTypesGenerate
 3. edit the PropTypes Table to modify default type
 
 #### Tips
