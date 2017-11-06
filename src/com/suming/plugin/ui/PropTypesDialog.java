@@ -57,9 +57,9 @@ public class PropTypesDialog extends JDialog {
         table = new JBTable();
         PropTypesModel model = new PropTypesModel();
         String[] columnNames = {
-                "属性名称",
-                "属性类型",
-                "是否必传"};
+                "name",
+                "type",
+                "isRequired"};
         Object[][] data = new Object[this.paramList.size()][3];
         for (int i = 0; i < this.paramList.size(); i++) {
             data[i][0] = paramList.get(i);
@@ -76,8 +76,8 @@ public class PropTypesDialog extends JDialog {
         thr.setHorizontalAlignment(JLabel.CENTER);
         table.getTableHeader().setDefaultRenderer(thr);
         //修改特殊项
-        TableColumn typeColumn = table.getColumn("属性类型");
-        TableColumn isRequireColumn = table.getColumn("是否必传");
+        TableColumn typeColumn = table.getColumn("type");
+        TableColumn isRequireColumn = table.getColumn("isRequired");
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
         typeColumn.setCellRenderer(new ComboBoxRenderer());
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));

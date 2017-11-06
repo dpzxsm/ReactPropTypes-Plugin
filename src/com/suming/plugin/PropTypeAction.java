@@ -23,7 +23,6 @@ public class PropTypeAction extends CommonAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        // TODO: insert action logic here
         Project project = getEventProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
@@ -34,20 +33,20 @@ public class PropTypeAction extends CommonAction {
 
         final String selectedText = getSelectedText(caret);
         if (selectedText == null) {
-            showHint(editor, "必须选择一个组件名称");
+            showHint(editor, "you must select the text as a Component's name");
             return;
         }
 
         ES6Class component = getSelectComponent(selectedText, file);
         if (component == null) {
-            showHint(editor, "你选择的字符串不是一个有效的ES6组件");
+            showHint(editor, "the selected text is not a vaild ES6 Component ");
             return;
         }
 
         List<String> propNameList = findPropsNameList(component);
 
         if(propNameList == null || propNameList.size() == 0){
-            showHint(editor, "当前组件没有使用参数");
+            showHint(editor, "can's find any props");
             return;
         }
 
