@@ -43,11 +43,25 @@ public class PropTypeAction extends CommonAction {
             return;
         }
 
-        List<String> propNameList = findPropsNameList(component);
+        List<PropTypeBean> propNameList = findPropsNameList(component);
 
         if(propNameList == null || propNameList.size() == 0){
             showHint(editor, "can's find any props");
             return;
+        }
+
+        JSAssignmentExpression expression = getPropTypeElementByName(file,selectedText);
+        if(expression !=null){
+            List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
+            for (PropTypeBean anExistPropTypeBean : existPropNameList) {
+                for (int j = 0; j < propNameList.size(); j++) {
+                    if (anExistPropTypeBean.name.equals(propNameList.get(j).name)) {
+                        propNameList.set(j, anExistPropTypeBean);
+                        break;
+                    }
+                }
+            }
+            System.out.println("");
         }
 
         PropTypesDialog dialog = new PropTypesDialog(propNameList);

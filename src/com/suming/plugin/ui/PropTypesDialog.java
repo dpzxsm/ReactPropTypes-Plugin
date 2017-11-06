@@ -20,14 +20,14 @@ public class PropTypesDialog extends JDialog {
     private JScrollPane sp;
     private JCheckBox isUseNewPropTypes;
     private JTable table;
-    private List<String> paramList ;
+    private List<PropTypeBean> paramList ;
     private onSubmitListener onSubmitListener;
 
     public void setOnSubmitListener(PropTypesDialog.onSubmitListener onSubmitListener) {
         this.onSubmitListener = onSubmitListener;
     }
 
-    public PropTypesDialog(List<String> paramList) {
+    public PropTypesDialog(List<PropTypeBean> paramList) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -62,9 +62,9 @@ public class PropTypesDialog extends JDialog {
                 "isRequired"};
         Object[][] data = new Object[this.paramList.size()][3];
         for (int i = 0; i < this.paramList.size(); i++) {
-            data[i][0] = paramList.get(i);
-            data[i][1] = "any";
-            data[i][2] = false;
+            data[i][0] = paramList.get(i).name;
+            data[i][1] = paramList.get(i).type;
+            data[i][2] = paramList.get(i).isRequired;
         }
         model.setDataVector(data,columnNames);
         table.setModel(model);
@@ -113,20 +113,7 @@ public class PropTypesDialog extends JDialog {
         super.setVisible(b);
     }
 
-    public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
-        list.add("name");
-        list.add("title");
-        list.add("onChange");
-        list.add("key");
-        list.add("style");
-        PropTypesDialog dialog = new PropTypesDialog(list);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-    }
-
-    public static interface onSubmitListener{
+    public interface onSubmitListener{
         void onSubmit(List<PropTypeBean> beans , boolean isNew);
     }
 }

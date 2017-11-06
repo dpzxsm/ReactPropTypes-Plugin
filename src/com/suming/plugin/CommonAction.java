@@ -18,11 +18,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.suming.plugin.bean.PropTypeBean;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 abstract class CommonAction extends AnAction {
@@ -103,7 +107,7 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  List<String> findPropsNameList(PsiElement psiElement) {
+  List<PropTypeBean> findPropsNameList(PsiElement psiElement) {
     List<String> paramList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
             .filter(o -> o.getText().equals("props"))
@@ -161,9 +165,30 @@ abstract class CommonAction extends AnAction {
     return paramList.stream()
             .distinct()
             .sorted()
+            .map(o -> new PropTypeBean(o,"any", "false"))
             .collect(Collectors.toList());
   }
 
+  @NotNull
+  List<PropTypeBean> findPropsNameListInPropTypeObject(JSAssignmentExpression expression){
+    List<PropTypeBean> paramList = new ArrayList<>();
+    if(expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
+      JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
+      JSProperty[] properties = literalExpression.getProperties();
+      for (JSProperty property : properties) {
+        if(property.getLastChild().getText().contains("PropTypes")){
+          Pattern p = Pattern.compile("PropTypes\\s*\\.\\s*(any|string|object|bool|func|number|array|symbol)\\s*\\.?\\s*(isRequired)?");
+          Matcher m = p.matcher(property.getLastChild().getText());
+          if(m.matches()){
+            String type = m.group(1)==null?"any":m.group(1);
+            String isRequired = m.group(2)==null?"false":"true";
+            paramList.add(new PropTypeBean(property.getName(),type,isRequired));
+          }
+        }
+      }
+    }
+    return  paramList;
+  }
 
   @Nullable
   JSAssignmentExpression getPropTypeElementByName (PsiFile file, String componentName){
