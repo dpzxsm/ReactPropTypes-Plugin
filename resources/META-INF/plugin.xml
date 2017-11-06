@@ -1,0 +1,48 @@
+<idea-plugin>
+  <id>com.suming.react.PropTypes</id>
+  <name>ReactPropTypes</name>
+  <version>1.0</version>
+  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm">欢迎骚扰</vendor>
+
+  <description><![CDATA[
+      Auto Generate code for React's Component PropTypes<br>
+      General Usage Instructions:<br>
+      1.Select your Component's name<br>
+      2.Press shift + alt + command + P or command + N show generate List and click it<br>
+      3.edit the PropTypes Table<br>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      1.fix bug<br>
+      2.now can sort propTypes<br>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="107.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <!-- Enable plugin for all products -->
+  <depends>com.intellij.modules.lang</depends>
+  <!-- This enables the PSI capability for JavaScript -->
+  <depends>JavaScript</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="PropTypeAction" class="com.suming.plugin.PropTypeAction" text="PropTypeGenerate"
+            description="自动生成React的PropTypes">
+      <add-to-group group-id="GenerateGroup" anchor="first" />
+      <keyboard-shortcut keymap="$default" first-keystroke="shift meta alt P"/>
+    </action>
+  </actions>
+
+</idea-plugin>
