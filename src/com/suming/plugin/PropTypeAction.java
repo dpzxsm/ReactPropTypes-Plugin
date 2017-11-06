@@ -59,6 +59,9 @@ public class PropTypeAction extends CommonAction {
                         propNameList.set(j, anExistPropTypeBean);
                         break;
                     }
+                    if(j == propNameList.size() -1){
+                        propNameList.add(anExistPropTypeBean);
+                    }
                 }
             }
             System.out.println("");
