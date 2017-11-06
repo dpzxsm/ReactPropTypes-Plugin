@@ -25,7 +25,7 @@
 
 This is a IDEA plug-in for automatically generates PropTypes code , which currently supports only ES6 code. If you need to support ES5, please leave a message in issue.
 
-## Installed
+#### Installed
 1. Click <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
    IDEA Setting/Plugins/Install Plugin from disk to install.
 2. In plugin store search "ReactPropTypes" to install (waiting)
