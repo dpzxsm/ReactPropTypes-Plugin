@@ -2,7 +2,7 @@
 ## Preview：
 ![img](./ScreenShot.gif)
 
-## Download Url
+## Installed
 1. Click <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
    IDEA Setting/Plugins/Install Plugin from disk to install.
 2. In plugin store search "ReactPropTypes" to install (waiting)
