@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
-  <version>1.0</version>
+  <version>1.0.2</version>
   <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm">欢迎骚扰</vendor>
 
   <description><![CDATA[

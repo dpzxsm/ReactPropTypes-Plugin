@@ -3,8 +3,6 @@ package com.suming.plugin.ui;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer{
 

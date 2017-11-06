@@ -2,10 +2,8 @@ package com.suming.plugin;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.ecmascript6.psi.ES6Class;
-import com.intellij.lang.ecmascript6.psi.ES6ClassExpression;
 import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.ecmascript6.psi.impl.ES6ClassExpressionImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.*;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -25,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 abstract class CommonAction extends AnAction {
@@ -103,10 +100,6 @@ abstract class CommonAction extends AnAction {
       return aChildren.getTextRange().getStartOffset();
     }
     return 0;
-  }
-
-  boolean getComponentPropTypes(String ComponentName, PsiFile file){
-    return false;
   }
 
   @Nullable
