@@ -9,7 +9,7 @@
 #### 安装插件
 1. 点击 <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> 下载插件并且打开
    IDEA Setting/Plugins/Install Plugin from disk 本地安装这个插件
-2. 在插件商店中搜索ReactPropTypes (审核中...)
+2. 在插件商店中搜索ReactPropTypes，<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>商店链接</a>,欢迎评论.
 
 #### 如何使用
 1. 选择组件名称
@@ -18,7 +18,7 @@
 
 #### 提示
 1. 如果你的代码中没有import的PropTypes的模块，本插件将自动optional import。  
-2. 如果你的代码中已经包含对组件进行了类型检测，本插件将覆盖你之前的代码。
+2. 如果你的代码中已经包含对组件进行了类型检测，存在的类型将作为默认值，最后覆盖你之前的代码。
 3. 目前本插件不能预测属性的具体类型，所以请在弹框中自行设置。  
 
 ## English:
@@ -28,14 +28,14 @@ This is a IDEA plug-in for automatically generates PropTypes code , which curren
 #### Installed
 1. Click <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
    IDEA Setting/Plugins/Install Plugin from disk to install.
-2. In plugin store search "ReactPropTypes" to install (waiting)
+2. In plugin store search "ReactPropTypes" to install ,<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
 
 #### How to use
 1. Select your Component's name
 2. Press shift + alt + command + P or command + N show generate List and select PropTypesGenerate
-3. edit the PropTypes Table to modify default type
+3. Edit the PropTypes Table to modify default type
 
 #### Tips
-1. if your code does not have the import PropTypes module, the plug-in will automatically optional import.
-2. if your code already contains the type checking of the component, the plug-in will overwrite the code before you.
-3. currently, this plugin cannot predict the specific type of attribute, so please set it yourself in the bomb box.
+1. If your code does not have the import PropTypes module, the plug-in will automatically optional import.
+2. If your code already contains the type checking of the component, The existing type will be used as the default, finally overwriting your previous code.
+3. Currently, this plugin cannot predict the specific type of attribute, so please set it yourself in the bomb box.
