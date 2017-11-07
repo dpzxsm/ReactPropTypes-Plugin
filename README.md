@@ -7,7 +7,7 @@
 这是一个可以自动生成React组件的PropTypes代码的IDEA插件，目前仅支持ES6代码。如果需要支持ES5，请在issue中留言。
 
 #### 安装插件
-1. 在插件商店中搜索ReactPropTypes，<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>商店链接</a>,欢迎评论.
+1. 在插件商店中搜索ReactPropTypes下载安装，这是<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>商店链接</a>，欢迎评论.
 2. 点击 <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> 下载插件并且打开
    IDEA Setting/Plugins/Install Plugin from disk 本地安装这个插件
    
@@ -26,7 +26,7 @@
 This is a IDEA plug-in for automatically generates PropTypes code , which currently supports only ES6 code. If you need to support ES5, please leave a message in issue.
 
 #### Installed
-1. In plugin store search "ReactPropTypes" to install ,<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
+1. In plugin store search "ReactPropTypes" and install it , this is <a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
 2. Click <a href=https://raw.githubusercontent.com/dpzxsm/React-PropTypes-Plugin-IDEA/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
    IDEA Setting/Plugins/Install Plugin from disk to install.
    
