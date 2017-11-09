@@ -2,7 +2,7 @@
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
   <version>1.0.4</version>
-  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin-Intellij">Welcome Star this project</vendor>
+  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Welcome Star this project in github</vendor>
 
   <description><![CDATA[
       Auto Generate code for React's Component PropTypes (only useful for ES6 later)<br>
