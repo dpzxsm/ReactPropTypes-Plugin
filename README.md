@@ -8,8 +8,7 @@
 
 #### 安装插件
 1. 在插件商店中搜索ReactPropTypes下载安装，这是<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>商店链接</a>，欢迎评论.
-2. 点击 <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a> 下载插件并且打开
-   Setting/Plugins/Install Plugin from disk 本地安装这个插件
+2. 点击 <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a>(最新版本，但可能不太稳定) 下载插件并且打开Setting/Plugins/Install Plugin from disk 本地安装这个插件
    
 #### 如何使用
 1. 选择组件名称
@@ -27,8 +26,7 @@ This is a JetBrains plug-in that automatically generates PropTypes code for Reac
 
 #### Installed
 1. In plugin store search "ReactPropTypes" and install it , this is <a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
-2. Click <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
-   ``Setting/Plugins/Install Plugin from disk to install.
+2. Click <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a>(Recently, but may Unstable) to download and open Setting/Plugins/Install Plugin from disk to install.
    
 #### How to use
 1. Select your Component's name
