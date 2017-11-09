@@ -1,4 +1,4 @@
-# ReactPropTypes-Plugin-Intellij
+# ReactPropTypes-Plugin
 ## Preview：
 ![img](./ScreenShot.gif)
 
