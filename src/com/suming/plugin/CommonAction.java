@@ -4,8 +4,11 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.ecmascript6.psi.impl.ES6FieldStatementImpl;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
 import com.intellij.lang.javascript.psi.impl.*;
+import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -170,7 +173,7 @@ abstract class CommonAction extends AnAction {
   }
 
   @NotNull
-  List<PropTypeBean> findPropsNameListInPropTypeObject(JSAssignmentExpression expression){
+  List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression){
     List<PropTypeBean> paramList = new ArrayList<>();
     if(expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
@@ -191,13 +194,29 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  JSAssignmentExpression getPropTypeElementByName (PsiFile file, String componentName){
-    return  PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
+  PsiElement getES7PropTypeElementByName (ES6Class es6Class){
+    if(es6Class == null) return  null;
+    return  PsiTreeUtil.findChildrenOfType(es6Class, ES6FieldImpl.class)
             .stream()
-            .filter(o -> o.getText().matches(componentName+"\\s*\\.\\s*propTypes"))
-            .filter(o -> o.getParent() instanceof JSAssignmentExpression)
-            .map(o -> (JSAssignmentExpression)o.getParent())
+            .filter(o -> Objects.equals(o.getName(), "propTypes"))
+            .filter(o -> o.getJSContext() == JSContext.STATIC )
             .findFirst()
             .orElse(null);
+  }
+
+  @Nullable
+  PsiElement getPropTypeElementByName (PsiFile file, String componentName){
+    PsiElement psiElement = getES7PropTypeElementByName(getSelectComponent(componentName,file));
+    if(psiElement == null) {
+      return PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
+              .stream()
+              .filter(o -> o.getText().matches(componentName + "\\s*\\.\\s*propTypes"))
+              .filter(o -> o.getParent() instanceof JSAssignmentExpression)
+              .map(o -> (JSAssignmentExpression) o.getParent())
+              .findFirst()
+              .orElse(null);
+    }else {
+      return psiElement;
+    }
   }
 }

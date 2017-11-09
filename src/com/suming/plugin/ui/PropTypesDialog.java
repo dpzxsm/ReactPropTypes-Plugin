@@ -19,15 +19,17 @@ public class PropTypesDialog extends JDialog {
     private JButton buttonCancel;
     private JScrollPane sp;
     private JCheckBox isUseNewPropTypes;
+    private JCheckBox isUseES7;
     private JTable table;
     private List<PropTypeBean> paramList ;
+    private boolean isES7 = false;
     private onSubmitListener onSubmitListener;
 
     public void setOnSubmitListener(PropTypesDialog.onSubmitListener onSubmitListener) {
         this.onSubmitListener = onSubmitListener;
     }
 
-    public PropTypesDialog(List<PropTypeBean> paramList) {
+    public PropTypesDialog(List<PropTypeBean> paramList ,boolean isES7) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -50,7 +52,9 @@ public class PropTypesDialog extends JDialog {
 
         //赋值
         this.paramList = paramList;
+        this.isES7 = isES7;
         initParamList();
+        this.isUseES7.setSelected(isES7);
     }
 
     private void initParamList(){
@@ -99,7 +103,7 @@ public class PropTypesDialog extends JDialog {
             }
         }
         if(this.onSubmitListener!=null){
-            this.onSubmitListener.onSubmit(propTypeBeans , isUseNewPropTypes.isSelected());
+            this.onSubmitListener.onSubmit(propTypeBeans , isUseNewPropTypes.isSelected() ,isUseES7.isSelected());
         }
     }
 
@@ -114,6 +118,6 @@ public class PropTypesDialog extends JDialog {
     }
 
     public interface onSubmitListener{
-        void onSubmit(List<PropTypeBean> beans , boolean isNew);
+        void onSubmit(List<PropTypeBean> beans , boolean isNew ,boolean isES7);
     }
 }

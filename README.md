@@ -28,7 +28,7 @@ This is a JetBrains plug-in that automatically generates PropTypes code for Reac
 #### Installed
 1. In plugin store search "ReactPropTypes" and install it , this is <a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
 2. Click <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a> to download and open
-   Setting/Plugins/Install Plugin from disk to install.
+   ``Setting/Plugins/Install Plugin from disk to install.
    
 #### How to use
 1. Select your Component's name
