@@ -21,8 +21,6 @@ public class PropTypesDialog extends JDialog {
     private JCheckBox isUseNewPropTypes;
     private JCheckBox isUseES7;
     private JTable table;
-    private List<PropTypeBean> paramList ;
-    private boolean isES7 = false;
     private onSubmitListener onSubmitListener;
 
     public void setOnSubmitListener(PropTypesDialog.onSubmitListener onSubmitListener) {
@@ -50,22 +48,19 @@ public class PropTypesDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        //赋值
-        this.paramList = paramList;
-        this.isES7 = isES7;
-        initParamList();
+        initParamList(paramList);
         this.isUseES7.setSelected(isES7);
     }
 
-    private void initParamList(){
+    private void initParamList(List<PropTypeBean> paramList){
         table = new JBTable();
         PropTypesModel model = new PropTypesModel();
         String[] columnNames = {
                 "name",
                 "type",
                 "isRequired"};
-        Object[][] data = new Object[this.paramList.size()][3];
-        for (int i = 0; i < this.paramList.size(); i++) {
+        Object[][] data = new Object[paramList.size()][3];
+        for (int i = 0; i < paramList.size(); i++) {
             data[i][0] = paramList.get(i).name;
             data[i][1] = paramList.get(i).type;
             data[i][2] = paramList.get(i).isRequired;
@@ -91,7 +86,6 @@ public class PropTypesDialog extends JDialog {
     }
 
     private void onOK() {
-        // add your code here
         dispose();
         PropTypesModel model = (PropTypesModel) table.getModel();
         Vector vector = model.getDataVector();
@@ -108,7 +102,6 @@ public class PropTypesDialog extends JDialog {
     }
 
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 

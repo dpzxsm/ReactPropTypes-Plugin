@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -40,14 +41,14 @@ public class PropTypeAction extends CommonAction {
 
         ES6Class component = getSelectComponent(selectedText, file);
         if (component == null) {
-            showHint(editor, "the selected text is not a vaild ES6 Component ");
+            showHint(editor, "The selected text is not a vaild ES6 Component ");
             return;
         }
 
         List<PropTypeBean> propNameList = findPropsNameList(component);
 
         if(propNameList == null || propNameList.size() == 0){
-            showHint(editor, "can's find any props");
+            showHint(editor, "Can's find any props");
             return;
         }
 
@@ -69,13 +70,13 @@ public class PropTypeAction extends CommonAction {
 
         PropTypesDialog dialog = new PropTypesDialog(propNameList , expression instanceof  ES6FieldImpl);
         dialog.pack();
-        dialog.setLocationRelativeTo(null);
+        dialog.setLocationRelativeTo(WindowManager.getInstance().getFrame(project));
         dialog.setOnSubmitListener((beans,isNew,isES7) -> {
             Document document = editor.getDocument();
             runCommand(project, () -> {
-                //插入PropTypes语句
+                //insert PropTypes Object
                 insertPropTypesCodeString(document,file,selectedText,beans,isES7);
-                //自动插入Import语句
+                //insert import statement
                 autoInsertImportPropTypes(document,file,isNew);
             });
         });
@@ -122,9 +123,9 @@ public class PropTypeAction extends CommonAction {
 
 
     private void insertPropTypesCodeString(Document document, PsiFile file, String componentName, List<PropTypeBean> beans, boolean isES7){
-        PsiElement expression = getPropTypeElementByName(file,componentName);
-        // 以下两种情况特殊处理，直接插入代码
-        if(isES7 && (expression == null || !(expression instanceof ES6FieldImpl))){
+        PsiElement es7Element = getES7PropTypeElementByName(file,componentName);
+        PsiElement es6Element = getES6PropTypeElementByName(file,componentName);
+        if(isES7 && es7Element == null){
             ES6Class es6Class =  getSelectComponent(componentName,file);
             if(es6Class != null){
                 PsiElement p = es6Class.getMembers().iterator().next();
@@ -135,10 +136,7 @@ public class PropTypeAction extends CommonAction {
                                     true, true)+"\n\n  ");
                 }
             }
-            return;
-        }
-        if(expression ==null){
-            // must not ES7
+        }else if (!isES7 && es6Element == null){
             PsiElement p =  file.getLastChild();
             TextRange pRange = p.getTextRange();
             if(p instanceof PsiWhiteSpace){
@@ -150,8 +148,8 @@ public class PropTypeAction extends CommonAction {
                         getInsertPropTypeCodeStringIfNotExist(componentName,beans,
                                 true, false));
             }
-        }else {
-            TextRange textRange = expression.getLastChild().getTextRange();
+        } else {
+            TextRange textRange = (isES7?es7Element:es6Element).getLastChild().getTextRange();
             document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(),
                     getInsertPropTypeCodeStringIfNotExist(componentName,beans,false, isES7));
         }

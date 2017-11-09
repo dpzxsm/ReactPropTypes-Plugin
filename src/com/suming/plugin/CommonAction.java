@@ -4,7 +4,6 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.ecmascript6.psi.impl.ES6FieldStatementImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
 import com.intellij.lang.javascript.psi.impl.*;
@@ -21,6 +20,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtil;
 import com.suming.plugin.bean.PropTypeBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,10 +152,8 @@ abstract class CommonAction extends AnAction {
               for (PsiElement element : elements) {
                 if (element instanceof JSDestructuringShorthandedProperty) {
                   JSDestructuringShorthandedPropertyImpl property = (JSDestructuringShorthandedPropertyImpl) element;
-                  if (!property.getFirstChild().getText().equals("...")) {
-                    JSVariable variable = property.getDestructuringElement();
-                    if (variable != null) list.add(variable.getText());
-                  }
+                  JSVariable variable = property.getDestructuringElement();
+                  if (variable != null) list.add(variable.getText());
                 }
               }
               return list;
@@ -194,7 +192,8 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  PsiElement getES7PropTypeElementByName (ES6Class es6Class){
+  PsiElement getES7PropTypeElementByName(PsiFile file, String componentName){
+    ES6Class es6Class = getSelectComponent(componentName,file);
     if(es6Class == null) return  null;
     return  PsiTreeUtil.findChildrenOfType(es6Class, ES6FieldImpl.class)
             .stream()
@@ -204,17 +203,22 @@ abstract class CommonAction extends AnAction {
             .orElse(null);
   }
 
+  PsiElement getES6PropTypeElementByName(PsiFile file, String componentName){
+    return PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
+            .stream()
+            .filter(o -> o.getText().matches(componentName + "\\s*\\.\\s*propTypes"))
+            .filter(o -> o.getParent() instanceof JSAssignmentExpression)
+            .map(o -> (JSAssignmentExpression) o.getParent())
+            .filter(o -> o.getLastChild() instanceof JSObjectLiteralExpression)
+            .findFirst()
+            .orElse(null);
+  }
+
   @Nullable
   PsiElement getPropTypeElementByName (PsiFile file, String componentName){
-    PsiElement psiElement = getES7PropTypeElementByName(getSelectComponent(componentName,file));
+    PsiElement psiElement = getES7PropTypeElementByName(file, componentName);
     if(psiElement == null) {
-      return PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
-              .stream()
-              .filter(o -> o.getText().matches(componentName + "\\s*\\.\\s*propTypes"))
-              .filter(o -> o.getParent() instanceof JSAssignmentExpression)
-              .map(o -> (JSAssignmentExpression) o.getParent())
-              .findFirst()
-              .orElse(null);
+      return getES6PropTypeElementByName(file,componentName);
     }else {
       return psiElement;
     }

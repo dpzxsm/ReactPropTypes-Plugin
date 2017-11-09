@@ -2,18 +2,18 @@
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
   <version>1.0.4</version>
-  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Welcome Star this project in github</vendor>
+  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Welcome Star</vendor>
 
   <description><![CDATA[
       Auto Generate code for React's Component PropTypes (only useful for ES6 later)<br>
       Usage Instructions:<br>
         1. Select your Component's name<br>
         2. Press shift + alt + command + P or command + N show generate List and select PropTypesGenerate<br>
-        3. edit the PropTypes Table to modify default type<br>
+        3. Edit the PropTypes Table to modify default type<br>
     ]]></description>
 
   <change-notes><![CDATA[
-      support for es7<br>
+      Support for es7<br>
     ]]>
   </change-notes>
 
