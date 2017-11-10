@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
 import com.intellij.lang.javascript.psi.impl.*;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
@@ -20,7 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtil;
+import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +39,57 @@ abstract class CommonAction extends AnAction {
   void runCommand(Project project, final Runnable runnable) {
     CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(runnable), "inject PropTypes", null);
   }
+
+  @Override
+  public void actionPerformed(AnActionEvent e) {
+    Project project = getEventProject(e);
+    Editor editor = e.getData(PlatformDataKeys.EDITOR);
+    PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
+    Caret caret = e.getData(PlatformDataKeys.CARET);
+    if (project == null || editor == null || file == null || caret == null) {
+      return;
+    }
+
+    final String selectedText = getSelectedText(caret);
+    if (selectedText == null) {
+      showHint(editor, "you must select the text as a Component's name");
+      return;
+    }
+
+    ES6Class component = getSelectComponent(selectedText, file);
+    if (component == null) {
+      showHint(editor, "The selected text is not a vaild ES6 Component ");
+      return;
+    }
+
+    List<PropTypeBean> propNameList = findPropsNameList(component);
+
+    if(propNameList == null || propNameList.size() == 0){
+      showHint(editor, "Can's find any props");
+      return;
+    }
+
+    PsiElement expression = getPropTypeElementByName(file,selectedText);
+    if(expression !=null){
+      List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
+      for (PropTypeBean anExistPropTypeBean : existPropNameList) {
+        for (int j = 0; j < propNameList.size(); j++) {
+          if (anExistPropTypeBean.name.equals(propNameList.get(j).name)) {
+            propNameList.set(j, anExistPropTypeBean);
+            break;
+          }
+          if(j == propNameList.size() -1){
+            propNameList.add(anExistPropTypeBean);
+          }
+        }
+      }
+    }
+    ESVersion esVersion = expression instanceof ES6FieldImpl? ESVersion.ES7:ESVersion.ES5;
+    actionPerformed(project, editor, file, selectedText, propNameList, esVersion);
+  }
+
+  abstract void actionPerformed(Project project, Editor editor, PsiFile file, String selectedText,
+                                List<PropTypeBean> propNameList, ESVersion esVersion);
 
   @Nullable
   String getSelectedText(Caret caret) {

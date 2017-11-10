@@ -1,6 +1,7 @@
 package com.suming.plugin.ui;
 
 import com.intellij.ui.table.JBTable;
+import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -19,7 +20,7 @@ public class PropTypesDialog extends JDialog {
     private JButton buttonCancel;
     private JScrollPane sp;
     private JCheckBox isUseNewPropTypes;
-    private JCheckBox isUseES7;
+    private JComboBox esVersionBox;
     private JTable table;
     private onSubmitListener onSubmitListener;
 
@@ -27,7 +28,7 @@ public class PropTypesDialog extends JDialog {
         this.onSubmitListener = onSubmitListener;
     }
 
-    public PropTypesDialog(List<PropTypeBean> paramList ,boolean isES7) {
+    public PropTypesDialog(List<PropTypeBean> paramList ,ESVersion esVersion) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -48,8 +49,9 @@ public class PropTypesDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        // init Views
         initParamList(paramList);
-        this.isUseES7.setSelected(isES7);
+        this.esVersionBox.setSelectedItem(esVersion.toString());
     }
 
     private void initParamList(List<PropTypeBean> paramList){
@@ -70,11 +72,11 @@ public class PropTypesDialog extends JDialog {
         final DefaultListSelectionModel defaultListSelectionModel = new DefaultListSelectionModel();
         defaultListSelectionModel.setSelectionMode(SINGLE_SELECTION);
         table.setSelectionModel(defaultListSelectionModel);
-        //表头居中
+        // form header center
         DefaultTableCellHeaderRenderer thr = new DefaultTableCellHeaderRenderer();
         thr.setHorizontalAlignment(JLabel.CENTER);
         table.getTableHeader().setDefaultRenderer(thr);
-        //修改特殊项
+        //render special column
         TableColumn typeColumn = table.getColumn("type");
         TableColumn isRequireColumn = table.getColumn("isRequired");
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
@@ -97,7 +99,9 @@ public class PropTypesDialog extends JDialog {
             }
         }
         if(this.onSubmitListener!=null){
-            this.onSubmitListener.onSubmit(propTypeBeans , isUseNewPropTypes.isSelected() ,isUseES7.isSelected());
+            Object selectItem = esVersionBox.getSelectedItem();
+            this.onSubmitListener.onSubmit(propTypeBeans , isUseNewPropTypes.isSelected() ,
+                    ESVersion.valueOf(selectItem!=null?selectItem.toString():"ES6"));
         }
     }
 
@@ -111,6 +115,6 @@ public class PropTypesDialog extends JDialog {
     }
 
     public interface onSubmitListener{
-        void onSubmit(List<PropTypeBean> beans , boolean isNew ,boolean isES7);
+        void onSubmit(List<PropTypeBean> beans , boolean isNew ,ESVersion esVersion);
     }
 }

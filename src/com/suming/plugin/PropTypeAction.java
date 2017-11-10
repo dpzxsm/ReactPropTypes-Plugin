@@ -11,10 +11,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
+import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
 import com.suming.plugin.ui.PropTypesDialog;
 import com.suming.plugin.utils.PsiElementHelper;
@@ -24,58 +24,16 @@ import java.util.List;
 public class PropTypeAction extends CommonAction {
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = getEventProject(e);
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
-        Caret caret = e.getData(PlatformDataKeys.CARET);
-        if (project == null || editor == null || file == null || caret == null) {
-            return;
-        }
-
-        final String selectedText = getSelectedText(caret);
-        if (selectedText == null) {
-            showHint(editor, "you must select the text as a Component's name");
-            return;
-        }
-
-        ES6Class component = getSelectComponent(selectedText, file);
-        if (component == null) {
-            showHint(editor, "The selected text is not a vaild ES6 Component ");
-            return;
-        }
-
-        List<PropTypeBean> propNameList = findPropsNameList(component);
-
-        if(propNameList == null || propNameList.size() == 0){
-            showHint(editor, "Can's find any props");
-            return;
-        }
-
-        PsiElement expression = getPropTypeElementByName(file,selectedText);
-        if(expression !=null){
-            List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
-            for (PropTypeBean anExistPropTypeBean : existPropNameList) {
-                for (int j = 0; j < propNameList.size(); j++) {
-                    if (anExistPropTypeBean.name.equals(propNameList.get(j).name)) {
-                        propNameList.set(j, anExistPropTypeBean);
-                        break;
-                    }
-                    if(j == propNameList.size() -1){
-                        propNameList.add(anExistPropTypeBean);
-                    }
-                }
-            }
-        }
-
-        PropTypesDialog dialog = new PropTypesDialog(propNameList , expression instanceof  ES6FieldImpl);
+    void actionPerformed(Project project, Editor editor, PsiFile file,
+                         String selectedText, List<PropTypeBean> propNameList, ESVersion esVersion) {
+        PropTypesDialog dialog = new PropTypesDialog(propNameList , esVersion);
         dialog.pack();
         dialog.setLocationRelativeTo(WindowManager.getInstance().getFrame(project));
-        dialog.setOnSubmitListener((beans,isNew,isES7) -> {
+        dialog.setOnSubmitListener((beans, isNew, newEsVersion) -> {
             Document document = editor.getDocument();
             runCommand(project, () -> {
                 //insert PropTypes Object
-                insertPropTypesCodeString(document,file,selectedText,beans,isES7);
+                insertPropTypesCodeString(document,file,selectedText,beans,newEsVersion);
                 //insert import statement
                 autoInsertImportPropTypes(document,file,isNew);
             });
@@ -122,9 +80,11 @@ public class PropTypeAction extends CommonAction {
     }
 
 
-    private void insertPropTypesCodeString(Document document, PsiFile file, String componentName, List<PropTypeBean> beans, boolean isES7){
+    private void insertPropTypesCodeString(Document document, PsiFile file, String componentName,
+                                           List<PropTypeBean> beans, ESVersion esVersion){
         PsiElement es7Element = getES7PropTypeElementByName(file,componentName);
         PsiElement es6Element = getES6PropTypeElementByName(file,componentName);
+        boolean isES7 = esVersion == ESVersion.ES7;
         if(isES7 && es7Element == null){
             ES6Class es6Class =  getSelectComponent(componentName,file);
             if(es6Class != null){
@@ -178,5 +138,4 @@ public class PropTypeAction extends CommonAction {
         sb.append("\n").append(isES7?"  ":"").append("}");
         return sb.toString();
     }
-
 }
