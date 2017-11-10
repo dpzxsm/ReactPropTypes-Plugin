@@ -231,11 +231,11 @@ abstract class CommonAction extends AnAction {
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
         if(property.getLastChild().getText().contains("PropTypes")){
-          Pattern p = Pattern.compile("PropTypes\\s*\\.\\s*(any|string|object|bool|func|number|array|symbol)\\s*\\.?\\s*(isRequired)?");
+          Pattern p = Pattern.compile("(React)?\\s*\\.?\\s*PropTypes\\s*\\.\\s*(any|string|object|bool|func|number|array|symbol)\\s*\\.?\\s*(isRequired)?");
           Matcher m = p.matcher(property.getLastChild().getText());
           if(m.matches()){
-            String type = m.group(1)==null?"any":m.group(1);
-            String isRequired = m.group(2)==null?"false":"true";
+            String type = m.group(2)==null?"any":m.group(2);
+            String isRequired = m.group(3)==null?"false":"true";
             paramList.add(new PropTypeBean(property.getName(),type,isRequired));
           }
         }
