@@ -87,8 +87,8 @@ public class PropTypeAction extends CommonAction {
         boolean isES7 = esVersion == ESVersion.ES7;
         if(isES7 && es7Element == null){
             ES6Class es6Class =  getSelectComponent(componentName,file);
-            if(es6Class != null){
-                PsiElement p = es6Class.getMembers().iterator().next();
+            if(es6Class != null && es6Class.getChildren().length > 2){
+                PsiElement p = es6Class.getChildren()[2];
                 if(p !=null){
                     TextRange pRange = p.getTextRange();
                     document.insertString(pRange.getStartOffset(),
