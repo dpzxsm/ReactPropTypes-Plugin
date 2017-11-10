@@ -1,10 +1,18 @@
 # ReactPropTypes-Plugin
  <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin/blob/master/README_ZH.md>中文文档</a>
  
-## Preview：
-![img](./ScreenShot.gif)
+ This is a JetBrains plug-in that automatically generates PropTypes code for React components, and only supports ES6 later at the moment. If you need to support ES5, please leave a message in issue.Compatible with: IntelliJ IDEA, PhpStorm, WebStorm, PyCharm, RubyMine, AppCode, CLion, Gogland, Rider.
 
-This is a JetBrains plug-in that automatically generates PropTypes code for React components, and only supports ES6 code at the moment. If you need to support ES5, please leave a message in issue.Compatible with: IntelliJ IDEA, PhpStorm, WebStorm, PyCharm, RubyMine, AppCode, CLion, Gogland, Rider.
+## Preview：
+
+### ES6 Generate
+![img](./ScreenShots/ScreenShot1.gif)
+
+### ES7 Generate
+![img](./ScreenShots/ScreenShot2.gif)
+
+### Modify Exist PropTypes
+![img](./ScreenShots/ScreenShot3.gif)
 
 #### Installed
 1. In plugin store search "ReactPropTypes" and install it , this is <a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>Store Link</a>, Welcome comments.
@@ -12,7 +20,7 @@ This is a JetBrains plug-in that automatically generates PropTypes code for Reac
    
 #### How to use
 1. Select your Component's name
-2. Press shift + alt + command + P or command + N show generate List and select PropTypesGenerate
+2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS
 3. Edit the PropTypes Table to modify default type
 
 #### Tips

@@ -6,10 +6,14 @@
 
   <description><![CDATA[
       Auto Generate code for React's Component PropTypes (only useful for ES6 later)<br>
+
       Usage Instructions:<br>
         1. Select your Component's name<br>
-        2. Press shift + alt + command + P or command + N show generate List and select PropTypesGenerate<br>
+        2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press
+           shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS<br>
         3. Edit the PropTypes Table to modify default type<br>
+
+      If you have any question or want to see more detail introductions,  you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>Github</a>.<br>
     ]]></description>
 
   <change-notes><![CDATA[
@@ -40,7 +44,7 @@
     <action id="PropTypeAction" class="com.suming.plugin.PropTypeAction" text="PropTypeGenerate"
             description="Auto Generate React Component's PropTypes">
       <add-to-group group-id="GenerateGroup" anchor="first" />
-      <keyboard-shortcut keymap="$default" first-keystroke="shift meta alt P"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt P"/>
     </action>
   </actions>
 
