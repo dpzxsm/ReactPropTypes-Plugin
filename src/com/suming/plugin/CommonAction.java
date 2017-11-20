@@ -137,7 +137,6 @@ abstract class CommonAction extends AnAction {
     return PsiTreeUtil.findChildrenOfType(file, JSFunctionExpression.class)
             .stream()
             .filter(o -> o.getName()!=null && o.getName().equals(selectText))
-            .filter(o -> !(o.getParent() instanceof ES6Class))
             .filter(o -> {
               XmlElement element = PsiTreeUtil.findChildrenOfType(o, XmlElement.class)
                       .stream()
