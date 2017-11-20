@@ -17,9 +17,9 @@
 
 ## Features(1.0.5)
 1. Get a heightLight text as component's name if you are not select any text.
-1. In the Standard ES6 component, the plugin can distinguish  props's reference and destructuring assignment with keyword "props".
+1. In the Standard ES6 component, the plugin can distinguish  props's reference and destructuring assignment with keyword "props".<br>
    ![img](./ScreenShots/ScreenShot1.png)
-2. In the Stateless component, only when your first param must be named "props" or a destructuring parameter the plugin can distinguished.
+2. In the Stateless component, only when your first param must be named "props" or a destructuring parameter the plugin can distinguished.<br>
    ![img](./ScreenShots/ScreenShot2.png)
 3. If you select ES6 code style , the propTypes code will generate at the last line .Of cause, if you select ES7 code style, the propTypes code will generate at the component inside's first line.
 4. Double Click the row's name in the table, can modify distinguished name if not you expect, also support add a new row or delete what you not need.
