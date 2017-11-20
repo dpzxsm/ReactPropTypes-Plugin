@@ -165,21 +165,19 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  boolean hasImportPropTypes(boolean isNew, PsiFile file){
-    if(isNew){
-      return PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
-              .stream()
-              .filter(o -> o.getText().contains("\'prop-types\'"))
-              .map(Objects::nonNull)
-              .reduce(false,(a,b) -> a||b);
-    }else {
-      return PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
-              .stream()
-              .filter(o -> o.getText().contains("\'react\'"))
-              .filter(o -> o.getParent().getText().contains("PropTypes"))
-              .map(Objects::nonNull)
-              .reduce(false,(a,b) -> a||b);
-    }
+  boolean hasImportPropTypes(PsiFile file){
+    boolean hasNew = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
+            .stream()
+            .filter(o -> o.getText().contains("\'prop-types\'"))
+            .map(Objects::nonNull)
+            .reduce(false,(a,b) -> a||b);
+    boolean hasOld = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
+            .stream()
+            .filter(o -> o.getText().contains("\'react\'"))
+            .filter(o -> o.getParent().getText().contains("PropTypes"))
+            .map(Objects::nonNull)
+            .reduce(false,(a,b) -> a||b);
+    return hasNew||hasOld;
   }
 
   @Nullable

@@ -106,7 +106,7 @@ public class PropTypesDialog extends JDialog {
         nameColumn.setCellEditor(new DefaultCellEditor(new TextRenderer(false)));
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
         typeColumn.setCellRenderer(new ComboBoxRenderer());
-        typeColumn.setMaxWidth(100);
+        typeColumn.setMaxWidth(150);
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
         isRequireColumn.setMaxWidth(100);
@@ -127,7 +127,9 @@ public class PropTypesDialog extends JDialog {
         // if the component is a stateless component, disable esVersionBox
         if(component.getComponentType() == ComponentType.STATELESS){
             this.esVersionBox.setEnabled(false);
-        }else if(setting.getImportMode()!=null){
+        }
+        // can replace
+        if(setting.getImportMode()!=null){
             this.importBox.setSelectedItem(setting.getImportMode().getValue());
         }
         this.esVersionBox.addActionListener(e -> {

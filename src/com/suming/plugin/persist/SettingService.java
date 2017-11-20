@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @State(name = "SettingVariables",
         storages = {
-                @Storage(id = "setting", file = StoragePathMacros.APP_CONFIG +"/Setting.xm")
+                @Storage(id = "setting", file = StoragePathMacros.APP_CONFIG +"/Setting.xml")
         }
 )
 

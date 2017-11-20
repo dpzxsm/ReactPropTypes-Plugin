@@ -51,7 +51,7 @@ public class PropTypeAction extends CommonAction {
         if(importMode == ImportMode.Disabled) return;
         boolean isNew = importMode == ImportMode.NewModules;
 
-        if(!hasImportPropTypes(isNew,file)){
+        if(!hasImportPropTypes(file)){
             int firstImportIndex = findFirstImportIndex(file);
             if(isNew){
                 document.insertString(firstImportIndex, "import PropTypes from \'prop-types\'\n");
