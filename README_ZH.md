@@ -1,26 +1,22 @@
 这是一个可以自动生成React组件的PropTypes代码的jetbrains插件，目前仅支持ES6、ES7。如果需要支持ES5，请在issue中留言。支持的平台有:IntelliJ IDEA、PhpStorm、WebStorm、PyCharm、RubyMine、AppCode、CLion、Gogland、Rider
 
-## 预览图：
-
-### ES6写法
-![img](./ScreenShots/ScreenShot1.gif)
-
-### ES7写法
-![img](./ScreenShots/ScreenShot2.gif)
-
-### 修改存在的PropTypes
-![img](./ScreenShots/ScreenShot3.gif)
-
-#### 安装插件
+## 安装插件
 1. 在插件商店中搜索ReactPropTypes下载安装，这是<a href= https://plugins.jetbrains.com/plugin/10155-reactproptypes>商店链接</a>，欢迎评论.
 2. 点击 <a href=https://raw.githubusercontent.com/dpzxsm/ReactPropTypes-Plugin-Intellij/master/ReactPropTypes.jar>ReactPropTypes.jar</a>(最新版本，但可能不太稳定) 下载插件并且打开Setting/Plugins/Install Plugin from disk 本地安装这个插件
    
-#### 如何使用
+## 如何使用
 1. 选择组件名称
 2. 按下 command + N (Windows系统是alt + insert) 并且选择PropTypesGenerate, 或者按下shift + command + alt + P (Windows系统是shift + ctrl + alt + P) 在Mac系统中。
 3. 编辑弹框中的表格进行类型的修改稿
 
-#### 提示
-1. 如果你的代码中没有import的PropTypes的模块，本插件将自动optional import。  
-2. 如果你的代码中已经包含对组件进行了类型检测，存在的类型将作为默认值，最后覆盖你之前的代码。
-3. 目前本插件不能预测属性的具体类型，所以请在弹框中自行设置。  
+## 预览图
+![img](./ScreenShots/ScreenShot.gif)
+
+## 特性(1.0.5)
+1. 如果你没有选择任何文字，插件将自动找到高亮的文字作为选择的组件名称
+1. 在ES6的标准组件中，插件通过找到props的引用和props的解析赋值来找到属性名
+   ![img](./ScreenShots/ScreenShot1.png)
+2. 在无状态组件中，只有当你的第一个参数命名为props或者是一个解析赋值的参数样式，插件才能识别出来
+   ![img](./ScreenShots/ScreenShot2.png)
+3. 如果你选择了ES6的代码风格，代码将生产在当前文件的最后一行。当然，如果你选择了ES7的代码风格, 代码将在你所选择的组件内部的第一行生成。
+4. 如果自动生成的名字不是你期盼的那样，你可以在表格中双击名字进行修改，当然也可以手动添加一行或者删除你不需要的。

@@ -18,9 +18,10 @@
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Can modify exist PropTypes Code<br>
-      2.Support ES7 Code Generate<br>
-      3.Auto Select highLight text if you are not select text
+      1.Auto Select highLight text if you are not select text<br>
+      2.Support Stateless component<br>
+      3.Support Modify|Add|Delete PropTypes<br>
+      More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
 
