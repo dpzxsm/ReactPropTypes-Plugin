@@ -2,6 +2,8 @@ package com.suming.plugin;
 
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -96,7 +98,7 @@ public class PropTypeAction extends CommonAction {
         if(isES7 && es7Element == null){
             ES6Class es6Class =  getSelectES6Component(componentName,file);
             if(es6Class != null){
-                PsiElement p = es6Class.getMembers().iterator().next();
+                PsiElement p = PsiElementHelper.getRealFirstChild(es6Class);
                 if(p !=null){
                     TextRange pRange = p.getTextRange();
                     document.insertString(pRange.getStartOffset(),
