@@ -15,13 +15,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlElement;
+import com.suming.plugin.bean.Component;
+import com.suming.plugin.bean.ComponentType;
 import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
 import org.jetbrains.annotations.NotNull;
@@ -50,15 +55,15 @@ abstract class CommonAction extends AnAction {
       return;
     }
 
-    final String selectedText = getSelectedText(caret);
+    final String selectedText = getSelectedText(editor);
     if (selectedText == null) {
       showHint(editor, "you must select the text as a Component's name");
       return;
     }
 
-    ES6Class component = getSelectComponent(selectedText, file);
+    Component component = getSelectComponent(selectedText, file);
     if (component == null) {
-      showHint(editor, "The selected text is not a vaild ES6 Component ");
+      showHint(editor, "The selected text is not a vaild React Component ");
       return;
     }
 
@@ -83,24 +88,33 @@ abstract class CommonAction extends AnAction {
           }
         }
       }
+      if(expression instanceof ES6FieldImpl){
+        component.setEsVersion(ESVersion.ES7);
+      }else {
+        component.setEsVersion(ESVersion.ES6);
+      }
     }
-    ESVersion esVersion = expression instanceof ES6FieldImpl? ESVersion.ES7:ESVersion.ES5;
-    actionPerformed(project, editor, file, selectedText, propNameList, esVersion);
+    actionPerformed(project, editor, file, selectedText, propNameList, component);
   }
 
   abstract void actionPerformed(Project project, Editor editor, PsiFile file, String selectedText,
-                                List<PropTypeBean> propNameList, ESVersion esVersion);
+                                List<PropTypeBean> propNameList, Component component);
 
   @Nullable
-  String getSelectedText(Caret caret) {
-    if (caret == null) {
-      return null;
+  String getSelectedText(Editor editor) {
+    SelectionModel selectionModel = editor.getSelectionModel();
+    if(selectionModel.hasSelection()){
+      return selectionModel.getSelectedText();
+    }else {
+      final ArrayList<TextRange> ranges = new ArrayList<>();
+      final int offset = editor.getCaretModel().getOffset();
+      com.suming.plugin.utils.SelectWordUtilCompat.addWordOrLexemeSelection(false, editor, offset, ranges, com.suming.plugin.utils.SelectWordUtilCompat.JAVASCRIPT_IDENTIFIER_PART_CONDITION);
+      if(ranges.size()>0){
+        return  editor.getDocument().getText(ranges.get(0));
+      }else {
+        return null;
+      }
     }
-
-    if (caret.getSelectedText() == null || caret.getSelectedText().trim().length() == 0) {
-      return null;
-    }
-    return caret.getSelectedText().trim();
   }
 
   void showHint(Editor editor, String s) {
@@ -108,14 +122,46 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  ES6Class getSelectComponent(String selectText, PsiFile file){
+  ES6Class getSelectES6Component(String selectText, PsiFile file){
     return PsiTreeUtil.findChildrenOfType(file, JSReferenceExpression.class)
             .stream()
             .filter(o -> o.getText().equals(selectText))
             .filter(o -> o.getParent() instanceof ES6Class)
             .map(o -> (ES6Class)o.getParent())
-             .findFirst()
-             .orElse(null);
+            .findFirst()
+            .orElse(null);
+  }
+
+  @Nullable
+  private JSFunctionExpression getSelectStatelessComponent(String selectText, PsiFile file){
+    return PsiTreeUtil.findChildrenOfType(file, JSFunctionExpression.class)
+            .stream()
+            .filter(o -> o.getName()!=null && o.getName().equals(selectText))
+            .filter(o -> {
+              XmlElement element = PsiTreeUtil.findChildrenOfType(o, XmlElement.class)
+                      .stream()
+                      .findFirst()
+                      .orElse(null);
+              return  element != null;
+            })
+            .findFirst()
+            .orElse(null);
+
+  }
+
+  @Nullable
+  private Component getSelectComponent(String selectText, PsiFile file){
+    ES6Class es6Class = getSelectES6Component(selectText,file);
+    if(es6Class != null){
+      return new Component(es6Class, ComponentType.STANDARD, ESVersion.ES6);
+    }else {
+      JSFunctionExpression statelessElement = getSelectStatelessComponent(selectText, file);
+      if(statelessElement!=null){
+        return new Component(statelessElement, ComponentType.STATELESS);
+      }else {
+        return null;
+      }
+    }
   }
 
   @Nullable
@@ -163,10 +209,44 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  List<PropTypeBean> findPropsNameList(PsiElement psiElement) {
+  private List<PropTypeBean> findPropsNameList(Component component) {
+    PsiElement psiElement = component.getElement();
+    ComponentType componentType = component.getComponentType();
+    List<String> paramList = new ArrayList<>();
+    if(componentType == ComponentType.STATELESS){
+      JSParameterList jsParameterList = ((JSFunctionExpressionImpl) psiElement).getParameterList();
+      JSParameterListElement propsParam = jsParameterList != null? jsParameterList.getParameters()[0]: null;
+      if(propsParam != null){
+        if(propsParam instanceof JSDestructuringParameter){
+          JSDestructuringElement parent = (JSDestructuringElement) propsParam;
+          JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
+          PsiElement[] elements = destructuringObject.getChildren();
+          for (PsiElement element : elements) {
+            if (element instanceof JSDestructuringShorthandedProperty) {
+              JSDestructuringShorthandedPropertyImpl property = (JSDestructuringShorthandedPropertyImpl) element;
+              JSVariable variable = property.getDestructuringElement();
+              if (variable != null) paramList.add(variable.getName());
+            }
+          }
+        }else {
+          paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(),psiElement));
+        }
+      }
+      System.out.println("");
+    }else {
+      paramList.addAll(findPropsNameListByPropsIdentity("props",psiElement));
+    }
+    return paramList.stream()
+            .distinct()
+            .sorted()
+            .map(o -> new PropTypeBean(o,"any", "false"))
+            .collect(Collectors.toList());
+  }
+
+  List<String> findPropsNameListByPropsIdentity(String identity, PsiElement psiElement){
     List<String> paramList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
-            .filter(o -> o.getText().equals("props"))
+            .filter(o -> o.getText().equals(identity))
             .filter(o -> o.getElementType().toString().equals("JS:IDENTIFIER"))
             .filter(o -> {
               if(o.getParent() instanceof JSReferenceExpressionImpl){
@@ -184,18 +264,17 @@ abstract class CommonAction extends AnAction {
 
     List<String> destructuringParamList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
-            .filter(o -> o.getText().equals("props"))
+            .filter(o -> o.getText().equals(identity))
             .filter(o -> o.getElementType().toString().equals("JS:IDENTIFIER"))
             .filter(o -> {
-               if(o.getParent() instanceof  JSReferenceExpressionImpl){
-                 JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
-                 if(parent.getParent() instanceof  JSDestructuringElementImpl
-                         && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl
-                         && parent.getFirstChild() instanceof JSThisExpressionImpl){
-                   return true;
-                 }
-               }
-               return  false;
+              if(o.getParent() instanceof  JSReferenceExpressionImpl){
+                JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
+                if(parent.getParent() instanceof  JSDestructuringElementImpl
+                        && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl){
+                  return true;
+                }
+              }
+              return  false;
             })
             .map(o -> {
               JSDestructuringElementImpl parent = (JSDestructuringElementImpl) o.getParent().getParent();
@@ -206,7 +285,7 @@ abstract class CommonAction extends AnAction {
                 if (element instanceof JSDestructuringShorthandedProperty) {
                   JSDestructuringShorthandedPropertyImpl property = (JSDestructuringShorthandedPropertyImpl) element;
                   JSVariable variable = property.getDestructuringElement();
-                  if (variable != null) list.add(variable.getText());
+                  if (variable != null) list.add(variable.getName());
                 }
               }
               return list;
@@ -216,11 +295,7 @@ abstract class CommonAction extends AnAction {
               return a;
             });
     paramList.addAll(destructuringParamList);
-    return paramList.stream()
-            .distinct()
-            .sorted()
-            .map(o -> new PropTypeBean(o,"any", "false"))
-            .collect(Collectors.toList());
+    return paramList;
   }
 
   @NotNull
@@ -246,7 +321,7 @@ abstract class CommonAction extends AnAction {
 
   @Nullable
   PsiElement getES7PropTypeElementByName(PsiFile file, String componentName){
-    ES6Class es6Class = getSelectComponent(componentName,file);
+    ES6Class es6Class = getSelectES6Component(componentName,file);
     if(es6Class == null) return  null;
     return  PsiTreeUtil.findChildrenOfType(es6Class, ES6FieldImpl.class)
             .stream()
@@ -256,6 +331,7 @@ abstract class CommonAction extends AnAction {
             .orElse(null);
   }
 
+  @Nullable
   PsiElement getES6PropTypeElementByName(PsiFile file, String componentName){
     return PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
             .stream()
@@ -268,12 +344,23 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  PsiElement getPropTypeElementByName (PsiFile file, String componentName){
-    PsiElement psiElement = getES7PropTypeElementByName(file, componentName);
-    if(psiElement == null) {
-      return getES6PropTypeElementByName(file,componentName);
+  private PsiElement getES5PropTypeElementByName(PsiFile file, String componentName){
+    return null;
+  }
+
+  @Nullable
+  private PsiElement getPropTypeElementByName(PsiFile file, String componentName){
+    // ES7 is ES6Field , ES6 is JSDefinitionExpression, ES5 is JSField
+    PsiElement es7Element = getES7PropTypeElementByName(file, componentName);
+    if(es7Element == null) {
+      PsiElement es6Element = getES6PropTypeElementByName(file,componentName);
+      if(es6Element == null){
+        return getES5PropTypeElementByName(file,componentName);
+      }else {
+        return es6Element;
+      }
     }else {
-      return psiElement;
+      return es7Element;
     }
   }
 }

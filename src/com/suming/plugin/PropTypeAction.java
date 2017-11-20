@@ -2,20 +2,20 @@ package com.suming.plugin;
 
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.javascript.psi.JSAssignmentExpression;
-import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.suming.plugin.bean.Component;
 import com.suming.plugin.bean.ESVersion;
+import com.suming.plugin.bean.ImportMode;
 import com.suming.plugin.bean.PropTypeBean;
+import com.suming.plugin.persist.SettingService;
 import com.suming.plugin.ui.PropTypesDialog;
 import com.suming.plugin.utils.PsiElementHelper;
 
@@ -24,25 +24,33 @@ import java.util.List;
 public class PropTypeAction extends CommonAction {
 
     @Override
-    void actionPerformed(Project project, Editor editor, PsiFile file,
-                         String selectedText, List<PropTypeBean> propNameList, ESVersion esVersion) {
-        PropTypesDialog dialog = new PropTypesDialog(propNameList , esVersion);
+    void actionPerformed(Project project,
+                         Editor editor,
+                         PsiFile file,
+                         String selectedText,
+                         List<PropTypeBean> propNameList,
+                         Component component) {
+        PropTypesDialog dialog = new PropTypesDialog(propNameList , component);
         dialog.pack();
         dialog.setLocationRelativeTo(WindowManager.getInstance().getFrame(project));
-        dialog.setOnSubmitListener((beans, isNew, newEsVersion) -> {
+        dialog.setOnSubmitListener((beans, importMode, esVersion) -> {
             Document document = editor.getDocument();
             runCommand(project, () -> {
                 //insert PropTypes Object
-                insertPropTypesCodeString(document,file,selectedText,beans,newEsVersion);
+                insertPropTypesCodeString(document,file,selectedText,beans,esVersion);
                 //insert import statement
-                autoInsertImportPropTypes(document,file,isNew);
+                autoInsertImportPropTypes(document,file,importMode);
             });
         });
         dialog.setVisible(true);
     }
 
 
-    private void autoInsertImportPropTypes(Document document, PsiFile file ,boolean isNew) {
+    private void autoInsertImportPropTypes(Document document, PsiFile file ,ImportMode importMode) {
+
+        if(importMode == ImportMode.Disabled) return;
+        boolean isNew = importMode == ImportMode.NewModules;
+
         if(!hasImportPropTypes(isNew,file)){
             int firstImportIndex = findFirstImportIndex(file);
             if(isNew){
@@ -86,9 +94,9 @@ public class PropTypeAction extends CommonAction {
         PsiElement es6Element = getES6PropTypeElementByName(file,componentName);
         boolean isES7 = esVersion == ESVersion.ES7;
         if(isES7 && es7Element == null){
-            ES6Class es6Class =  getSelectComponent(componentName,file);
-            if(es6Class != null && es6Class.getChildren().length > 2){
-                PsiElement p = es6Class.getChildren()[2];
+            ES6Class es6Class =  getSelectES6Component(componentName,file);
+            if(es6Class != null){
+                PsiElement p = es6Class.getMembers().iterator().next();
                 if(p !=null){
                     TextRange pRange = p.getTextRange();
                     document.insertString(pRange.getStartOffset(),

@@ -1,8 +1,8 @@
 <idea-plugin>
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
-  <version>1.0.4</version>
-  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Welcome Star</vendor>
+  <version>1.0.5</version>
+  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Su Ming</vendor>
 
   <description><![CDATA[
       Auto Generate code for React's Component PropTypes (only useful for ES6 later)<br>
@@ -13,16 +13,19 @@
            shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS<br>
         3. Edit the PropTypes Table to modify default type<br>
 
-      If you have any question or want to see more detail introductions,  you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>Github</a>.<br>
+      If you have any question or want to see more detail introductions,  you can jump to Github.<br>
     ]]></description>
 
   <change-notes><![CDATA[
-      Support for ES7<br>
+      Hello, the Plugin has some changes:<br>
+      1.Can modify exist PropTypes Code<br>
+      2.Support ES7 Code Generate<br>
+      3.Auto Select highLight text if you are not select text
     ]]>
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="107.0"/>
+  <idea-version since-build="143.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
@@ -47,5 +50,9 @@
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt P"/>
     </action>
   </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.suming.plugin.persist.SettingService" />
+  </extensions>
 
 </idea-plugin>

@@ -14,12 +14,6 @@
       <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.png" removable="false" auto-create-binding="false" can-attach-label="true">
         <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
       </item>
-      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.png" removable="false" auto-create-binding="true" can-attach-label="false">
-        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
-        <initial-values>
-          <property name="text" value="Button" />
-        </initial-values>
-      </item>
       <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.png" removable="false" auto-create-binding="true" can-attach-label="false">
         <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
         <initial-values>
@@ -48,6 +42,12 @@
           <preferred-size width="150" height="-1" />
         </default-constraints>
       </item>
+      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.png" removable="false" auto-create-binding="true" can-attach-label="false">
+        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
+        <initial-values>
+          <property name="text" value="Button" />
+        </initial-values>
+      </item>
       <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.png" removable="false" auto-create-binding="true" can-attach-label="true">
         <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
           <preferred-size width="150" height="-1" />
@@ -63,13 +63,13 @@
           <preferred-size width="150" height="50" />
         </default-constraints>
       </item>
+      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.png" removable="false" auto-create-binding="true" can-attach-label="true">
+        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
+      </item>
       <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.png" removable="false" auto-create-binding="true" can-attach-label="true">
         <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
           <preferred-size width="150" height="50" />
         </default-constraints>
-      </item>
-      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.png" removable="false" auto-create-binding="true" can-attach-label="true">
-        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
       </item>
       <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.png" removable="false" auto-create-binding="true" can-attach-label="false">
         <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">

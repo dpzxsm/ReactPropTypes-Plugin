@@ -1,12 +1,15 @@
 package com.suming.plugin.ui;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.table.JBTable;
-import com.suming.plugin.bean.ESVersion;
-import com.suming.plugin.bean.PropTypeBean;
+import com.suming.plugin.bean.*;
+import com.suming.plugin.bean.Component;
+import com.suming.plugin.persist.SettingService;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +22,18 @@ public class PropTypesDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JScrollPane sp;
-    private JCheckBox isUseNewPropTypes;
     private JComboBox esVersionBox;
+    private JButton addPropBtn;
+    private JComboBox importBox;
     private JTable table;
     private onSubmitListener onSubmitListener;
+    private SettingService settingService = ServiceManager.getService(SettingService.class);
 
     public void setOnSubmitListener(PropTypesDialog.onSubmitListener onSubmitListener) {
         this.onSubmitListener = onSubmitListener;
     }
 
-    public PropTypesDialog(List<PropTypeBean> paramList ,ESVersion esVersion) {
+    public PropTypesDialog(List<PropTypeBean> paramList ,Component component) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -48,24 +53,40 @@ public class PropTypesDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        // init Views
-        initParamList(paramList);
-        this.esVersionBox.setSelectedItem(esVersion.toString());
+        // init Table
+        initTable(paramList);
+        // init other widget
+        initOtherWidgets(component);
     }
 
-    private void initParamList(List<PropTypeBean> paramList){
+    private List<PropTypeBean> data2ParamList(){
+        PropTypesModel model = (PropTypesModel) table.getModel();
+        Vector vector = model.getDataVector();
+        List<PropTypeBean> propTypeBeans = new ArrayList<>();
+        for(Object a : vector){
+            if(a instanceof Vector){
+                Object[] o =  ((Vector) a).toArray();
+                if(o[0].toString().trim().equals("")||o[0].toString().equals(TextRenderer.defaultValue)) continue;
+                propTypeBeans.add(new PropTypeBean(o[0],o[1],o[2]));
+            }
+        }
+        return propTypeBeans;
+    }
+
+    private void initTable(List<PropTypeBean> paramList){
         table = new JBTable();
         PropTypesModel model = new PropTypesModel();
         String[] columnNames = {
                 "name",
                 "type",
-                "isRequired"};
-        Object[][] data = new Object[paramList.size()][3];
+                "isRequired",
+                "ops"};
+        Object[][] data = new Object[paramList.size()][4];
         for (int i = 0; i < paramList.size(); i++) {
             data[i][0] = paramList.get(i).name;
             data[i][1] = paramList.get(i).type;
             data[i][2] = paramList.get(i).isRequired;
+            data[i][3] = false;
         }
         model.setDataVector(data,columnNames);
         table.setModel(model);
@@ -77,31 +98,69 @@ public class PropTypesDialog extends JDialog {
         thr.setHorizontalAlignment(JLabel.CENTER);
         table.getTableHeader().setDefaultRenderer(thr);
         //render special column
+        TableColumn nameColumn = table.getColumn("name");
         TableColumn typeColumn = table.getColumn("type");
         TableColumn isRequireColumn = table.getColumn("isRequired");
+        TableColumn operationColumn = table.getColumn("ops");
+        nameColumn.setCellRenderer(new TextRenderer(true));
+        nameColumn.setCellEditor(new DefaultCellEditor(new TextRenderer(false)));
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
         typeColumn.setCellRenderer(new ComboBoxRenderer());
+        typeColumn.setMaxWidth(100);
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
         isRequireColumn.setMaxWidth(100);
+        ButtonEditor buttonEditor = new ButtonEditor();
+        operationColumn.setCellRenderer(new ButtonRenderer());
+        operationColumn.setCellEditor(buttonEditor);
+        operationColumn.setMaxWidth(100);
         sp.setViewportView(table);
+    }
+
+    private void initOtherWidgets(Component component){
+        Setting setting = settingService.getState();
+        if(component.getEsVersion()!=null){
+            this.esVersionBox.setSelectedItem(component.getEsVersion().toString());
+        }else if(setting.getEsVersion()!=null){
+            this.esVersionBox.setSelectedItem(setting.getEsVersion().toString());
+        }
+        // if the component is a stateless component, disable esVersionBox
+        if(component.getComponentType() == ComponentType.STATELESS){
+            this.esVersionBox.setEnabled(false);
+        }else if(setting.getImportMode()!=null){
+            this.importBox.setSelectedItem(setting.getImportMode().getValue());
+        }
+        this.esVersionBox.addActionListener(e -> {
+            // current hasn't propTypes
+            if(component.getEsVersion() ==null){
+                Object selectItem = esVersionBox.getSelectedItem();
+                ESVersion esVersion = ESVersion.valueOf(selectItem!=null?selectItem.toString():"ES6");
+                setting.setEsVersion(esVersion);
+            }
+        });
+        this.importBox.addActionListener(e -> {
+            Object selectImportItem  = importBox.getSelectedItem();
+            ImportMode importMode = selectImportItem == null?ImportMode.Disabled:ImportMode.toEnum(selectImportItem.toString());
+            setting.setImportMode(importMode);
+        });
+        // add button onClick event
+        addPropBtn.addActionListener(e -> {
+            PropTypesModel model = (PropTypesModel) table.getModel();
+            model.addRow(new PropTypeBean("","any", false));
+            int  rowCount = table.getRowCount();
+            table.getSelectionModel().setSelectionInterval(rowCount-1 , rowCount- 1 );
+            Rectangle rect = table.getCellRect(rowCount-1 ,  0 ,  true );
+            table.scrollRectToVisible(rect);
+        });
     }
 
     private void onOK() {
         dispose();
-        PropTypesModel model = (PropTypesModel) table.getModel();
-        Vector vector = model.getDataVector();
-        List<PropTypeBean> propTypeBeans = new ArrayList<>();
-        for(Object a : vector){
-            if(a instanceof Vector){
-                Object[] o =  ((Vector) a).toArray();
-                propTypeBeans.add(new PropTypeBean(o[0],o[1],o[2]));
-            }
-        }
         if(this.onSubmitListener!=null){
             Object selectItem = esVersionBox.getSelectedItem();
-            this.onSubmitListener.onSubmit(propTypeBeans , isUseNewPropTypes.isSelected() ,
-                    ESVersion.valueOf(selectItem!=null?selectItem.toString():"ES6"));
+            ESVersion esVersion = selectItem==null?ESVersion.ES6:ESVersion.valueOf(selectItem.toString());
+            ImportMode importMode = settingService.getState().getImportMode();
+            this.onSubmitListener.onSubmit(data2ParamList() ,importMode ,esVersion);
         }
     }
 
@@ -109,12 +168,7 @@ public class PropTypesDialog extends JDialog {
         dispose();
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-    }
-
     public interface onSubmitListener{
-        void onSubmit(List<PropTypeBean> beans , boolean isNew ,ESVersion esVersion);
+        void onSubmit(List<PropTypeBean> beans , ImportMode importMode ,ESVersion esVersion);
     }
 }
