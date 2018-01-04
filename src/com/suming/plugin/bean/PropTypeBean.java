@@ -5,9 +5,19 @@ public class PropTypeBean {
     public String type;
     public boolean isRequired;
 
-    public PropTypeBean(Object name, Object type, Object isRequired) {
-        this.name = name.toString();
-        this.type = type.toString();
-        this.isRequired = isRequired.toString().equals("true");
+    public String describe;
+
+    public PropTypeBean(String name, String type, boolean isRequired) {
+        this.name = name;
+        this.type = type;
+        this.isRequired = isRequired;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
     }
 }

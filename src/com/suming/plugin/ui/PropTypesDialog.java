@@ -2,18 +2,20 @@ package com.suming.plugin.ui;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.table.JBTable;
+import com.siyeh.ig.ui.TextField;
 import com.suming.plugin.bean.*;
 import com.suming.plugin.bean.Component;
 import com.suming.plugin.persist.SettingService;
+import com.suming.plugin.utils.PropTypesHelper;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
+import java.util.stream.Collectors;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
@@ -67,10 +69,15 @@ public class PropTypesDialog extends JDialog {
             if(a instanceof Vector){
                 Object[] o =  ((Vector) a).toArray();
                 if(o[0].toString().trim().equals("")||o[0].toString().equals(TextRenderer.defaultValue)) continue;
-                propTypeBeans.add(new PropTypeBean(o[0],o[1],o[2]));
+                boolean isRequired = o[2].toString().equals("true");
+                propTypeBeans.add(new PropTypeBean(o[0].toString(),o[1].toString(),isRequired));
             }
         }
-        return propTypeBeans;
+        // sort by name
+        return propTypeBeans.stream()
+                .filter(PropTypesHelper.distinctByKey(PropTypeBean::getName))
+                .sorted(Comparator.comparing(PropTypeBean::getName))
+                .collect(Collectors.toList());
     }
 
     private void initTable(List<PropTypeBean> paramList){
@@ -80,13 +87,15 @@ public class PropTypesDialog extends JDialog {
                 "name",
                 "type",
                 "isRequired",
+                "info",
                 "ops"};
-        Object[][] data = new Object[paramList.size()][4];
+        Object[][] data = new Object[paramList.size()][5];
         for (int i = 0; i < paramList.size(); i++) {
             data[i][0] = paramList.get(i).name;
             data[i][1] = paramList.get(i).type;
             data[i][2] = paramList.get(i).isRequired;
-            data[i][3] = false;
+            data[i][3] = paramList.get(i).describe;
+            data[i][4] = false;
         }
         model.setDataVector(data,columnNames);
         table.setModel(model);
@@ -101,6 +110,7 @@ public class PropTypesDialog extends JDialog {
         TableColumn nameColumn = table.getColumn("name");
         TableColumn typeColumn = table.getColumn("type");
         TableColumn isRequireColumn = table.getColumn("isRequired");
+        TableColumn infoColumn = table.getColumn("info");
         TableColumn operationColumn = table.getColumn("ops");
         nameColumn.setCellRenderer(new TextRenderer(true));
         nameColumn.setCellEditor(new DefaultCellEditor(new TextRenderer(false)));
@@ -110,9 +120,18 @@ public class PropTypesDialog extends JDialog {
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
         isRequireColumn.setMaxWidth(100);
+        infoColumn.setCellEditor(new DefaultCellEditor(new JTextField()){
+            @Override
+            public boolean isCellEditable(EventObject anEvent) {
+                return false;
+            }
+        });
+        infoColumn.setMinWidth(120);
+        infoColumn.setMaxWidth(150);
         ButtonEditor buttonEditor = new ButtonEditor();
         operationColumn.setCellRenderer(new ButtonRenderer());
         operationColumn.setCellEditor(buttonEditor);
+        operationColumn.setMinWidth(100);
         operationColumn.setMaxWidth(100);
         sp.setViewportView(table);
     }

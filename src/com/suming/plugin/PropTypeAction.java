@@ -2,9 +2,6 @@ package com.suming.plugin;
 
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.ecma6.impl.ES6FieldImpl;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -17,7 +14,6 @@ import com.suming.plugin.bean.Component;
 import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.ImportMode;
 import com.suming.plugin.bean.PropTypeBean;
-import com.suming.plugin.persist.SettingService;
 import com.suming.plugin.ui.PropTypesDialog;
 import com.suming.plugin.utils.PsiElementHelper;
 
@@ -92,8 +88,8 @@ public class PropTypeAction extends CommonAction {
 
     private void insertPropTypesCodeString(Document document, PsiFile file, String componentName,
                                            List<PropTypeBean> beans, ESVersion esVersion){
-        PsiElement es7Element = getES7PropTypeElementByName(file,componentName);
-        PsiElement es6Element = getES6PropTypeElementByName(file,componentName);
+        PsiElement es7Element = getES7FieldElementByName(file, componentName,"propTypes");
+        PsiElement es6Element = getES6FieldByName(file, componentName, "propTypes");
         boolean isES7 = esVersion == ESVersion.ES7;
         if(isES7 && es7Element == null){
             ES6Class es6Class =  getSelectES6Component(componentName,file);
