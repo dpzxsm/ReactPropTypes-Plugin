@@ -5,10 +5,10 @@
   <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Su Ming</vendor>
 
   <description><![CDATA[
-      Auto Generate code for React's Component PropTypes (only useful for ES6 later)<br>
+      Auto Generate code for React's Component PropTypes (ES5 is not supported for the time being)<br>
 
       Usage Instructions:<br>
-        1. Select your Component's name<br>
+        1. Select or take the cursor in your Component's name<br>
         2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press
            shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS<br>
         3. Edit the PropTypes Table to modify default type<br>
@@ -18,9 +18,9 @@
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Auto Select highLight text if you are not select text<br>
-      2.Support Stateless component<br>
-      3.Support Modify|Add|Delete PropTypes<br>
+      1.Fixed the bug can't work in the Stateless Component<br>
+      2.If your component has a default value for props, the plugin will fill the default type to the table<br>
+      3.show the describe about props's source<br>
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>

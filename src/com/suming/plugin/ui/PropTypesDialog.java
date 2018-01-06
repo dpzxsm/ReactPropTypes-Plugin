@@ -87,7 +87,7 @@ public class PropTypesDialog extends JDialog {
                 "name",
                 "type",
                 "isRequired",
-                "info",
+                "describe",
                 "ops"};
         Object[][] data = new Object[paramList.size()][5];
         for (int i = 0; i < paramList.size(); i++) {
@@ -110,7 +110,7 @@ public class PropTypesDialog extends JDialog {
         TableColumn nameColumn = table.getColumn("name");
         TableColumn typeColumn = table.getColumn("type");
         TableColumn isRequireColumn = table.getColumn("isRequired");
-        TableColumn infoColumn = table.getColumn("info");
+        TableColumn infoColumn = table.getColumn("describe");
         TableColumn operationColumn = table.getColumn("ops");
         nameColumn.setCellRenderer(new TextRenderer(true));
         nameColumn.setCellEditor(new DefaultCellEditor(new TextRenderer(false)));
@@ -167,7 +167,7 @@ public class PropTypesDialog extends JDialog {
         // add button onClick event
         addPropBtn.addActionListener(e -> {
             PropTypesModel model = (PropTypesModel) table.getModel();
-            model.addRow(new PropTypeBean("","any", false));
+            model.addRow(new PropTypeBean("","any", false, "manual added"));
             int  rowCount = table.getRowCount();
             table.getSelectionModel().setSelectionInterval(rowCount-1 , rowCount- 1 );
             Rectangle rect = table.getCellRect(rowCount-1 ,  0 ,  true );

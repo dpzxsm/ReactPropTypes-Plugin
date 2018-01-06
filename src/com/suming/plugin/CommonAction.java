@@ -81,7 +81,7 @@ abstract class CommonAction extends AnAction {
           break;
         }
         if(i == propNameList.size() -1){
-          propNameList.add(new PropTypeBean(defaultPropType.name, defaultPropType.type, false));
+          propNameList.add(new PropTypeBean(defaultPropType.name, defaultPropType.type, false, "never used"));
         }
       }
     }
@@ -250,8 +250,11 @@ abstract class CommonAction extends AnAction {
           paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(),psiElement));
         }
       }
-    }else {
+    }else if (componentType == ComponentType.STANDARD){
       paramList.addAll(findPropsNameListByPropsIdentity("props",psiElement));
+      paramList.addAll(findPropsNameListByPropsIdentity("nextProps",psiElement));
+    }else {
+      // ES5 is not supported for the time being
     }
     // maybe have duplicate data, so must distinct
     return paramList.stream()
@@ -379,7 +382,7 @@ abstract class CommonAction extends AnAction {
   @NotNull
   List<DefaultPropType> findPropsNameListInDefaultPropsElement(PsiElement expression){
     List<DefaultPropType> paramList = new ArrayList<>();
-    if(expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
+    if(expression!=null && expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
@@ -410,7 +413,7 @@ abstract class CommonAction extends AnAction {
   @NotNull
   List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression){
     List<PropTypeBean> paramList = new ArrayList<>();
-    if(expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
+    if(expression!=null && expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {

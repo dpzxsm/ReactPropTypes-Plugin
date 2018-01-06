@@ -10,9 +10,10 @@
 3. 编辑弹框中的表格进行类型的修改稿
 
 ## 预览图
-![img](./ScreenShots/ScreenShot.gif)
+![img](./ScreenShots/ScreenShot1.gif)
+![img](./ScreenShots/ScreenShot2.gif)
 
-## 特性(1.0.5)
+## 特性(更新到1.0.6)
 1. 如果你没有选择任何文字，插件将自动找到高亮的文字作为选择的组件名称
 1. 在ES6的标准组件中，插件通过找到props的引用和props的解析赋值来找到属性名<br>
    ![img](./ScreenShots/ScreenShot1.png)
@@ -20,3 +21,5 @@
    ![img](./ScreenShots/ScreenShot2.png)
 3. 如果你选择了ES6的代码风格，代码将生产在当前文件的最后一行。当然，如果你选择了ES7的代码风格, 代码将在你所选择的组件内部的第一行生成。
 4. 如果自动生成的名字不是你期盼的那样，你可以在表格中双击名字进行修改，当然也可以手动添加一行或者删除你不需要的。
+5. 如果你的组件中含有默认值的props, 插件会读取默认值的类型填充到最终表单之中 。
+6. 表单中增加了describe项，用于显示props的来源信息

@@ -13,6 +13,13 @@ public class PropTypeBean {
         this.isRequired = isRequired;
     }
 
+    public PropTypeBean(String name, String type, boolean isRequired, String describe) {
+        this.name = name;
+        this.type = type;
+        this.isRequired = isRequired;
+        this.describe = describe;
+    }
+
     public String getName() {
         return name;
     }
