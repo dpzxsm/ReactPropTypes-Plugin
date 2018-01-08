@@ -285,16 +285,20 @@ abstract class CommonAction extends AnAction {
         JSDestructuringProperty property = (JSDestructuringProperty) element;
         JSInitializerOwner owner = property.getDestructuringElement();
         JSExpression initializer = owner!=null?owner.getInitializer():null ;
-        String type = "any";
-        if(initializer != null){
-          type = PropTypesHelper.getPropTypeByValue(initializer.getText());
-        }else if(owner != null){
-          String ownerStr = owner.getText();
-          if(ownerStr.startsWith("{") && ownerStr.endsWith("}")){
-            type = "object";
+        String propertyText = property.getFirstChild().getText();
+        if(propertyText!=null && !propertyText.equals("...")){
+          String type = "any";
+          if(initializer != null){
+            type = PropTypesHelper.getPropTypeByValue(initializer.getText());
+          }else if(owner != null){
+            String ownerStr = owner.getText();
+            if(ownerStr.startsWith("{") && ownerStr.endsWith("}")){
+              type = "object";
+            }
           }
+          propTypeBeans.add(new PropTypeBean(property.getName(), type, false));
         }
-        propTypeBeans.add(new PropTypeBean(property.getName(), type, false));
+
       }
     }
     return propTypeBeans;
