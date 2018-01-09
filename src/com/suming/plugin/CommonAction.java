@@ -245,7 +245,7 @@ abstract class CommonAction extends AnAction {
         if(propsParam instanceof JSDestructuringParameter){
           JSDestructuringElement parent = (JSDestructuringElement) propsParam;
           JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
-          paramList.addAll(getPropsWithDestructuringProperty(destructuringObject));
+          paramList.addAll(getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent()));
         }else {
           paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(),psiElement));
         }
@@ -277,16 +277,20 @@ abstract class CommonAction extends AnAction {
 
 
   @NotNull
-  private List<PropTypeBean> getPropsWithDestructuringProperty(JSDestructuringObject destructuringObject){
+  private List<PropTypeBean> getPropsWithDestructuringProperty(JSDestructuringObject destructuringObject,
+                                                               PsiElement parentElement){
     List<PropTypeBean> propTypeBeans = new ArrayList<>();
     PsiElement[] elements = destructuringObject.getChildren();
     for (PsiElement element : elements) {
       if (element instanceof JSDestructuringProperty) {
         JSDestructuringProperty property = (JSDestructuringProperty) element;
         JSInitializerOwner owner = property.getDestructuringElement();
+        PsiElement firstChild = property.getFirstChild();
         JSExpression initializer = owner!=null?owner.getInitializer():null ;
-        String propertyText = property.getFirstChild().getText();
-        if(propertyText!=null && !propertyText.equals("...")){
+        if(firstChild.getText().equals("...")){
+          // 为防止死循环， 所以不考虑reset对象的解析赋值
+          propTypeBeans.addAll(findPropsNameListWithIdentityReference(property.getName(),parentElement));
+        }else if(firstChild instanceof JSVariable){
           String type = "any";
           if(initializer != null){
             type = PropTypesHelper.getPropTypeByValue(initializer.getText());
@@ -298,7 +302,6 @@ abstract class CommonAction extends AnAction {
           }
           propTypeBeans.add(new PropTypeBean(property.getName(), type, false));
         }
-
       }
     }
     return propTypeBeans;
@@ -306,7 +309,7 @@ abstract class CommonAction extends AnAction {
 
   @NotNull
   private List<PropTypeBean>  findPropsNameListByPropsIdentity(String identity, PsiElement psiElement){
-    // maybe contains default value
+    // maybe contains default value, so find first
     List<PropTypeBean> destructuringParamList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
             .filter(o -> o.getText().equals(identity))
@@ -315,7 +318,8 @@ abstract class CommonAction extends AnAction {
               if(o.getParent() instanceof  JSReferenceExpressionImpl){
                 JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
                 if(parent.getParent() instanceof  JSDestructuringElementImpl
-                        && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl){
+                        && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl
+                        && parent.getParent().getParent() !=null){
                   return true;
                 }
               }
@@ -324,15 +328,20 @@ abstract class CommonAction extends AnAction {
             .map(o -> {
               JSDestructuringElementImpl parent = (JSDestructuringElementImpl) o.getParent().getParent();
               JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
-              return getPropsWithDestructuringProperty(destructuringObject);
+              return getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent());
             })
             .reduce(new ArrayList<>(),(a, b)-> {
               a.addAll(b);
               return a;
             });
+    List<PropTypeBean> paramList =  findPropsNameListWithIdentityReference(identity, psiElement);
+    paramList.addAll(destructuringParamList);
+    return paramList;
+  }
 
-    // must not have default value
-    List<PropTypeBean> paramList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
+  @NotNull
+  private List<PropTypeBean>  findPropsNameListWithIdentityReference(String identity, PsiElement psiElement){
+    return PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
             .filter(o -> o.getText().equals(identity))
             .filter(o -> o.getElementType().toString().equals("JS:IDENTIFIER"))
@@ -350,9 +359,8 @@ abstract class CommonAction extends AnAction {
             .distinct()
             .map(o -> new PropTypeBean(o,"any", false))
             .collect(Collectors.toList());
-    paramList.addAll(destructuringParamList);
-    return paramList;
   }
+
 
   @Nullable
   PsiElement getES7FieldElementByName(PsiFile file, String componentName , String fieldName ){
