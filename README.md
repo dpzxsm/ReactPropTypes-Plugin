@@ -16,7 +16,7 @@
 ![img](./ScreenShots/ScreenShot1.gif)
 ![img](./ScreenShots/ScreenShot2.gif)
 
-## Features(update to v1.0.6)
+## Features(update to v1.0.7)
 1. Get a heightLight text as component's name if you are not select any text.
 1. In the Standard ES6 component, the plugin can distinguish  props's reference and destructuring assignment with keyword "props" or "nextProps".<br>
 2. In the Stateless component, only when your first param must be named "props" or a destructuring parameter the plugin can distinguished.<br>
