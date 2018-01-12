@@ -2,7 +2,6 @@ package com.suming.plugin.ui;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.table.JBTable;
-import com.siyeh.ig.ui.TextField;
 import com.suming.plugin.bean.*;
 import com.suming.plugin.bean.Component;
 import com.suming.plugin.persist.SettingService;
@@ -27,6 +26,7 @@ public class PropTypesDialog extends JDialog {
     private JComboBox esVersionBox;
     private JButton addPropBtn;
     private JComboBox importBox;
+    private JCheckBox handleDefaultPropCheckBox;
     private JTable table;
     private onSubmitListener onSubmitListener;
     private SettingService settingService = ServiceManager.getService(SettingService.class);
@@ -68,9 +68,10 @@ public class PropTypesDialog extends JDialog {
         for(Object a : vector){
             if(a instanceof Vector){
                 Object[] o =  ((Vector) a).toArray();
-                if(o[0].toString().trim().equals("")||o[0].toString().equals(TextRenderer.defaultValue)) continue;
+                if(o[0].toString().trim().equals("")) continue;
                 boolean isRequired = o[2].toString().equals("true");
-                propTypeBeans.add(new PropTypeBean(o[0].toString(),o[1].toString(),isRequired));
+                String defaultValue = o[3] == null ? null : o[3].toString();
+                propTypeBeans.add(new PropTypeBean(o[0].toString(),o[1].toString(),isRequired , "", defaultValue));
             }
         }
         // sort by name
@@ -83,21 +84,7 @@ public class PropTypesDialog extends JDialog {
     private void initTable(List<PropTypeBean> paramList){
         table = new JBTable();
         PropTypesModel model = new PropTypesModel();
-        String[] columnNames = {
-                "name",
-                "type",
-                "isRequired",
-                "describe",
-                "ops"};
-        Object[][] data = new Object[paramList.size()][5];
-        for (int i = 0; i < paramList.size(); i++) {
-            data[i][0] = paramList.get(i).name;
-            data[i][1] = paramList.get(i).type;
-            data[i][2] = paramList.get(i).isRequired;
-            data[i][3] = paramList.get(i).describe;
-            data[i][4] = false;
-        }
-        model.setDataVector(data,columnNames);
+        model.initData(paramList);
         table.setModel(model);
         final DefaultListSelectionModel defaultListSelectionModel = new DefaultListSelectionModel();
         defaultListSelectionModel.setSelectionMode(SINGLE_SELECTION);
@@ -110,24 +97,18 @@ public class PropTypesDialog extends JDialog {
         TableColumn nameColumn = table.getColumn("name");
         TableColumn typeColumn = table.getColumn("type");
         TableColumn isRequireColumn = table.getColumn("isRequired");
-        TableColumn infoColumn = table.getColumn("describe");
+        TableColumn infoColumn = table.getColumn("defaultValue");
         TableColumn operationColumn = table.getColumn("ops");
-        nameColumn.setCellRenderer(new TextRenderer(true));
-        nameColumn.setCellEditor(new DefaultCellEditor(new TextRenderer(false)));
+        nameColumn.setCellRenderer(new NameTextRenderer(true, "Please input name !"));
+        nameColumn.setCellEditor(new DefaultCellEditor(new NameTextRenderer(false, "Please input name !")));
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
         typeColumn.setCellRenderer(new ComboBoxRenderer());
         typeColumn.setMaxWidth(150);
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
         isRequireColumn.setMaxWidth(100);
-        infoColumn.setCellEditor(new DefaultCellEditor(new JTextField()){
-            @Override
-            public boolean isCellEditable(EventObject anEvent) {
-                return false;
-            }
-        });
-        infoColumn.setMinWidth(120);
-        infoColumn.setMaxWidth(150);
+        infoColumn.setCellRenderer(new NameTextRenderer(true, ""));
+        infoColumn.setCellEditor(new DefaultCellEditor(new NameTextRenderer(false, "")));
         ButtonEditor buttonEditor = new ButtonEditor();
         operationColumn.setCellRenderer(new ButtonRenderer());
         operationColumn.setCellEditor(buttonEditor);
@@ -147,10 +128,11 @@ public class PropTypesDialog extends JDialog {
         if(component.getComponentType() == ComponentType.STATELESS){
             this.esVersionBox.setEnabled(false);
         }
-        // can replace
         if(setting.getImportMode()!=null){
             this.importBox.setSelectedItem(setting.getImportMode().getValue());
         }
+        this.handleDefaultPropCheckBox.setSelected(setting.isNeedDefault());
+
         this.esVersionBox.addActionListener(e -> {
             // current hasn't propTypes
             if(component.getEsVersion() ==null){
@@ -173,6 +155,9 @@ public class PropTypesDialog extends JDialog {
             Rectangle rect = table.getCellRect(rowCount-1 ,  0 ,  true );
             table.scrollRectToVisible(rect);
         });
+        handleDefaultPropCheckBox.addActionListener(e -> {
+            setting.setNeedDefault(handleDefaultPropCheckBox.isSelected());
+        });
     }
 
     private void onOK() {
@@ -181,7 +166,7 @@ public class PropTypesDialog extends JDialog {
             Object selectItem = esVersionBox.getSelectedItem();
             ESVersion esVersion = selectItem==null?ESVersion.ES6:ESVersion.valueOf(selectItem.toString());
             ImportMode importMode = settingService.getState().getImportMode();
-            this.onSubmitListener.onSubmit(data2ParamList() ,importMode ,esVersion);
+            this.onSubmitListener.onSubmit(data2ParamList() ,importMode ,esVersion , handleDefaultPropCheckBox.isSelected());
         }
     }
 
@@ -190,6 +175,6 @@ public class PropTypesDialog extends JDialog {
     }
 
     public interface onSubmitListener{
-        void onSubmit(List<PropTypeBean> beans , ImportMode importMode ,ESVersion esVersion);
+        void onSubmit(List<PropTypeBean> beans , ImportMode importMode ,ESVersion esVersion , boolean handleDefault);
     }
 }

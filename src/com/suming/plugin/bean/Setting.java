@@ -5,6 +5,8 @@ public class Setting {
     ESVersion esVersion;
     ImportMode importMode;
 
+    boolean isNeedDefault = false;
+
     public Setting() {
     }
 
@@ -22,5 +24,14 @@ public class Setting {
 
     public void setImportMode(ImportMode importMode) {
         this.importMode = importMode;
+    }
+
+
+    public boolean isNeedDefault() {
+        return isNeedDefault;
+    }
+
+    public void setNeedDefault(boolean needDefault) {
+        isNeedDefault = needDefault;
     }
 }

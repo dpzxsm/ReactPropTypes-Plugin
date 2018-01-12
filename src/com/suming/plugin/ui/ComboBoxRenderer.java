@@ -15,7 +15,8 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
                 "func",
                 "number",
                 "array",
-                "symbol"
+                "symbol",
+                "shape"
         });
         this.setEditable(false);
         this.setLightWeightPopupEnabled(false);

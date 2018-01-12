@@ -8,11 +8,13 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class TextRenderer extends JTextField implements TableCellRenderer{
-    public static String defaultValue = "Please input name !";
+public class NameTextRenderer extends JTextField implements TableCellRenderer{
 
-    TextRenderer(boolean isCellRenderer) {
+    private String placeholder = "";
+
+    NameTextRenderer(boolean isCellRenderer , String placeholder) {
         super();
+        this.placeholder = placeholder;
         if(isCellRenderer){
             setBorder(null);
             setBackground(null);
@@ -20,7 +22,7 @@ public class TextRenderer extends JTextField implements TableCellRenderer{
         this.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if(getText().equals(defaultValue)){
+                if(getText().equals(placeholder)){
                     setText("");
                 }
                 super.focusGained(e);
@@ -30,7 +32,7 @@ public class TextRenderer extends JTextField implements TableCellRenderer{
             public void focusLost(FocusEvent e) {
                 super.focusLost(e);
                 if(getText().equals("")){
-                    setText(defaultValue);
+                    setText(placeholder);
                 }
             }
         });
@@ -38,9 +40,9 @@ public class TextRenderer extends JTextField implements TableCellRenderer{
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        String content = value.toString();
-        if(content.trim().equals("")||content.equals(defaultValue)){
-            setText(defaultValue);
+        String content = value == null ? "" : value.toString();
+        if(content.trim().equals("")||content.equals(placeholder)){
+            setText(placeholder);
             setForeground(JBColor.GRAY);
         }else {
             setText(content);

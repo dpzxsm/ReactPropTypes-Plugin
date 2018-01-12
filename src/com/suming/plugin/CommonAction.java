@@ -69,27 +69,15 @@ abstract class CommonAction extends AnAction {
     }
     // create a empty list
     List<PropTypeBean> newPropNameList = new ArrayList<>();
-    List<PropTypeBean> propNameList = new ArrayList<>();
+    List<PropTypeBean> usePropNameList = new ArrayList<>();
     // find all use propTypes
-    propNameList.addAll(findPropsNameList(component));
-    // find default propTypes
-    List<DefaultPropType> defaultPropTypeList = findPropsNameListInDefaultPropsElement(getDefaultPropsElementByName(file,selectedText));
-    for (DefaultPropType defaultPropType : defaultPropTypeList){
-      for (int i = 0; i < propNameList.size(); i++) {
-        if(propNameList.get(i).name.equals(defaultPropType.name)){
-          propNameList.get(i).type = defaultPropType.type;
-          break;
-        }
-        if(i == propNameList.size() -1){
-          propNameList.add(new PropTypeBean(defaultPropType.name, defaultPropType.type, false, "never used"));
-        }
-      }
-    }
+    usePropNameList.addAll(findPropsNameList(component));
+
     // filter exist list
     PsiElement expression = getPropTypeElementByName(file,selectedText);
     if(expression !=null){
       List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
-      for (PropTypeBean propTypeBean : propNameList){
+      for (PropTypeBean propTypeBean : usePropNameList){
         for (int i = 0; i < existPropNameList.size(); i++) {
           if(existPropNameList.get(i).name.equals(propTypeBean.name)){
             break;
@@ -101,11 +89,11 @@ abstract class CommonAction extends AnAction {
         }
       }
       for (PropTypeBean propTypeBean : existPropNameList){
-        for (int i = 0; i < propNameList.size(); i++) {
-          if(propNameList.get(i).name.equals(propTypeBean.name)){
+        for (int i = 0; i < usePropNameList.size(); i++) {
+          if(usePropNameList.get(i).name.equals(propTypeBean.name)){
             break;
           }
-          if(i == propNameList.size() -1){
+          if(i == usePropNameList.size() -1){
             propTypeBean.setDescribe("never used");
           }
         }
@@ -117,7 +105,24 @@ abstract class CommonAction extends AnAction {
         component.setEsVersion(ESVersion.ES6);
       }
     }else {
-      newPropNameList.addAll(propNameList);
+      newPropNameList.addAll(usePropNameList);
+    }
+
+    // filter default propTypes
+    List<PropTypeBean> defaultPropTypeList = findPropsNameListInDefaultPropsElement(getDefaultPropsElementByName(file,selectedText));
+    for (PropTypeBean defaultPropType : defaultPropTypeList){
+      for (int i = 0; i < newPropNameList.size(); i++) {
+        if(newPropNameList.get(i).name.equals(defaultPropType.name)){
+          newPropNameList.get(i).type = defaultPropType.type;
+          newPropNameList.get(i).setDefaultValue(defaultPropType.getDefaultValue());
+          break;
+        }
+        if(i == newPropNameList.size() -1){
+          PropTypeBean bean = new PropTypeBean(defaultPropType.name, defaultPropType.type,
+                  false, "never used", defaultPropType.getDefaultValue());
+          newPropNameList.add(bean);
+        }
+      }
     }
 
     actionPerformed(project, editor, file, selectedText, newPropNameList, component);
@@ -392,16 +397,17 @@ abstract class CommonAction extends AnAction {
   }
 
   @NotNull
-  List<DefaultPropType> findPropsNameListInDefaultPropsElement(PsiElement expression){
-    List<DefaultPropType> paramList = new ArrayList<>();
+  List<PropTypeBean> findPropsNameListInDefaultPropsElement(PsiElement expression){
+    List<PropTypeBean> paramList = new ArrayList<>();
     if(expression!=null && expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
         String name = property.getName();
         String value = property.getValue()!=null?property.getValue().getText():"";
-        DefaultPropType defaultPropType = new DefaultPropType(name, value,PropTypesHelper.getPropTypeByValue(value));
-        paramList.add(defaultPropType);
+        PropTypeBean bean = new PropTypeBean(name, PropTypesHelper.getPropTypeByValue(value), false);
+        bean.setDefaultValue(value);
+        paramList.add(bean);
       }
     }
     return  paramList;
