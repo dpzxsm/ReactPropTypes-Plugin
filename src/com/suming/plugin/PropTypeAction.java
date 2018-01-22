@@ -15,10 +15,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileManagerListener;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.*;
-import com.suming.plugin.bean.Component;
-import com.suming.plugin.bean.ESVersion;
-import com.suming.plugin.bean.ImportMode;
-import com.suming.plugin.bean.PropTypeBean;
+import com.suming.plugin.bean.*;
 import com.suming.plugin.ui.PropTypesDialog;
 import com.suming.plugin.utils.PsiElementHelper;
 import org.jetbrains.annotations.NotNull;
@@ -176,6 +173,8 @@ public class PropTypeAction extends CommonAction {
   private String getInsertPropTypeCodeString(String componentName, List<PropTypeBean> beans,
                                              boolean isNewPropTypes, boolean isES7) {
     StringBuilder sb = new StringBuilder();
+    String propsObjBlank = isES7 ? "  " : "";
+    String propsBlank = propsObjBlank + "  ";
     if (isNewPropTypes) {
       if (isES7) {
         sb.append("static propTypes = {\n");
@@ -187,13 +186,34 @@ public class PropTypeAction extends CommonAction {
       sb.append("{\n");
     }
     for (int i = 0; i < beans.size(); i++) {
-      sb.append(isES7 ? "    " : "  ").append(beans.get(i).name).append(": PropTypes.").append(beans.get(i).type);
+      sb.append(propsBlank).append(beans.get(i).name).append(": PropTypes.");
+      if("shape".equals(beans.get(i).type)){
+        List<BasePropType> shapePropList = beans.get(i).getShapePropTypeList();
+        sb.append("shape");
+        if(shapePropList!=null){
+          int shapePropSize = shapePropList.size();
+          sb.append(shapePropSize > 0 ? "({\n" : "()" );
+          for (int j = 0; j <shapePropSize; j++) {
+            sb.append(propsBlank).append("  ").append(shapePropList.get(j).name)
+                    .append(": PropTypes.").append(shapePropList.get(j).type);
+            if (shapePropList.get(j).isRequired) {
+              sb.append(".isRequired");
+            }
+            if (j < shapePropList.size() - 1) sb.append(",\n");
+          }
+          if(shapePropSize > 0 ){
+            sb.append("\n").append(propsBlank).append("})");
+          }
+        }
+      }else {
+        sb.append(beans.get(i).type);
+      }
       if (beans.get(i).isRequired) {
         sb.append(".isRequired");
       }
       if (i < beans.size() - 1) sb.append(",\n");
     }
-    sb.append("\n").append(isES7 ? "  " : "").append("}");
+    sb.append("\n").append(propsObjBlank).append("}");
     return sb.toString();
   }
 
