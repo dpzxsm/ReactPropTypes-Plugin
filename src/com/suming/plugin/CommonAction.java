@@ -396,6 +396,11 @@ abstract class CommonAction extends AnAction {
     return null;
   }
 
+  /**
+   * Find defaultProps Object and to PropTypeBean List
+   * @param expression
+   * @return
+   */
   @NotNull
   List<PropTypeBean> findPropsNameListInDefaultPropsElement(PsiElement expression){
     List<PropTypeBean> paramList = new ArrayList<>();
@@ -413,6 +418,12 @@ abstract class CommonAction extends AnAction {
     return  paramList;
   }
 
+  /**
+   * Find defaultProps Object from a JS File with componentName
+   * @param file
+   * @param componentName
+   * @return
+   */
   @Nullable
   private PsiElement getDefaultPropsElementByName(PsiFile file, String componentName){
     PsiElement es7Element = getES7FieldElementByName(file, componentName, "defaultProps");
@@ -428,6 +439,11 @@ abstract class CommonAction extends AnAction {
     }
   }
 
+  /**
+   * Find propTypes Object and to PropTypeBean List
+   * @param expression
+   * @return
+   */
   @NotNull
   List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression){
     List<PropTypeBean> paramList = new ArrayList<>();
@@ -435,20 +451,23 @@ abstract class CommonAction extends AnAction {
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
-        if(property.getLastChild().getText().contains("PropTypes")){
-          Pattern p = Pattern.compile("(React)?\\s*\\.?\\s*PropTypes\\s*\\.\\s*(any|string|object|bool|func|number|array|symbol)\\s*\\.?\\s*(isRequired)?");
-          Matcher m = p.matcher(property.getLastChild().getText());
-          if(m.matches()){
-            String type = m.group(2)==null?"any":m.group(2);
-            boolean isRequired = m.group(3) != null;
-            paramList.add(new PropTypeBean(property.getName(),type, isRequired));
-          }
+        if(property.getName() !=null && property.getLastChild().getText().contains("PropTypes")){
+          PropTypeBean bean = new PropTypeBean(property.getName());
+          PropTypesHelper.updatePropTypeFromCode(bean,property.getLastChild().getText());
+          paramList.add(bean);
         }
+
       }
     }
     return  paramList;
   }
 
+  /**
+   * Find propTypes Object from a JS File with componentName
+   * @param file
+   * @param componentName
+   * @return
+   */
   @Nullable
   private PsiElement getPropTypeElementByName(PsiFile file, String componentName){
     // ES7 is ES6Field , ES6 is JSDefinitionExpression, ES5 is JSField

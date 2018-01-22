@@ -1,5 +1,10 @@
 package com.suming.plugin.utils;
 
+import com.suming.plugin.bean.BasePropType;
+import com.suming.plugin.bean.PropTypeBean;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -47,5 +52,38 @@ public class PropTypesHelper {
             type = "number";
         }
         return type;
+    }
+
+    public static void updatePropTypeFromCode(PropTypeBean bean , String codeStr){
+        // 去除换行符
+        codeStr = codeStr.replaceAll("\n", "");
+        Pattern p = Pattern.compile("(React)?\\s*\\.?\\s*PropTypes\\s*\\." +
+                "\\s*(any|string|object|bool|func|number|array|symbol|shape)"+
+                "\\s*(\\(\\{(.*)}\\))?"+
+                "\\s*\\.?\\s*(isRequired)?");
+        Matcher m = p.matcher(codeStr);
+        if(m.matches()){
+            bean.setType( m.group(2)==null?"any":m.group(2));
+            bean.setShapePropTypeList(matchShapePropType(m.group(4)));
+            bean.setRequired(m.group(5) != null);
+        }
+    }
+
+    private static List<BasePropType> matchShapePropType(String codeStr){
+        if(codeStr == null) return null;
+        List<BasePropType> shapePropList = new ArrayList<>();
+        String[] propsCode = codeStr.trim().split(",");
+        for(String childCode : propsCode){
+            Pattern p = Pattern.compile("\\s*(.*):\\s*"+"(React)?\\s*\\.?\\s*PropTypes\\s*\\." +
+                    "\\s*(any|string|object|bool|func|number|array|symbol)"+
+                    "\\s*\\.?\\s*(isRequired)?");
+            Matcher m = p.matcher(childCode);
+            if(m.matches()&& m.group(1) != null){
+                shapePropList.add(new BasePropType( m.group(1), m.group(3)==null ? "any": m.group(3),
+                        m.group(4) != null));
+
+            }
+        }
+        return shapePropList;
     }
 }

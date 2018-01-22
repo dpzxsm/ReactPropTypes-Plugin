@@ -38,9 +38,9 @@ class PropTypesModel extends DefaultTableModel{
     }
 
     @SuppressWarnings("unchecked")
-    void updateExtraData(int row, String dataName, Object data){
+    void updateExtraDataByName(int row, String name, Object data){
         HashMap extraData = (HashMap) this.getValueAt(row, 4);
-        extraData.put(dataName, data);
+        extraData.put(name, data);
         this.setValueAt(extraData, row,4);
     }
 

@@ -30,8 +30,9 @@ public class ShapePropTypesDialog extends JDialog {
     this.onSubmitListener = onSubmitListener;
   }
 
-  public ShapePropTypesDialog(List<BasePropType> propTypeList) {
+  public ShapePropTypesDialog(List<BasePropType> propTypeList, String title) {
     setContentPane(contentPane);
+    setTitle((title !=null && !title.equals("")? title : "unnamed"));
     setModal(true);
     getRootPane().setDefaultButton(buttonOK);
 
@@ -99,6 +100,13 @@ public class ShapePropTypesDialog extends JDialog {
       Rectangle rect = table.getCellRect(rowCount-1 ,  0 ,  true );
       table.scrollRectToVisible(rect);
     });
+    pasteWithJSONButton.addActionListener(e -> {
+      JsonInputDialog dialog = new JsonInputDialog();
+      dialog.pack();
+      dialog.setLocationRelativeTo(this);
+      dialog.setOnSubmitListener(beans -> model.reInitData(beans));
+      dialog.setVisible(true);
+    });
   }
 
   private void onOK() {
@@ -110,7 +118,6 @@ public class ShapePropTypesDialog extends JDialog {
   }
 
   private void onCancel() {
-    // add your code here if necessary
     dispose();
   }
 
@@ -121,7 +128,7 @@ public class ShapePropTypesDialog extends JDialog {
   public static void main(String[] args) {
     List<BasePropType> list = new ArrayList<>();
     list.add(new BasePropType("test", "string", true));
-    ShapePropTypesDialog dialog = new ShapePropTypesDialog(list);
+    ShapePropTypesDialog dialog = new ShapePropTypesDialog(list, "测试弹框");
     dialog.pack();
     dialog.setVisible(true);
     System.exit(0);

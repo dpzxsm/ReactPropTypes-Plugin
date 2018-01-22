@@ -12,6 +12,10 @@ public class PropTypeBean extends BasePropType{
     // special data
     private List<BasePropType> shapePropTypeList;
 
+    public PropTypeBean(String name) {
+        super(name, "any", false);
+    }
+
     public PropTypeBean(String name, String type, boolean isRequired) {
         super(name, type, isRequired);
     }

@@ -8,13 +8,16 @@ import com.suming.plugin.persist.SettingService;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
@@ -66,18 +69,21 @@ public class PropTypesDialog extends JDialog {
         table = new JBTable();
         model = new PropTypesModel();
         model.addTableModelListener(e -> {
-            // 1 表示是选中的type
+            //column = 1 表示是选中的type
             int column = e.getColumn();
-            if(e.getColumn() == 1 && e.getFirstRow() == e.getLastRow()){
+            if(column == 1 && e.getFirstRow() == e.getLastRow()){
                 int row = e.getFirstRow();
                 String type = model.getValueFromIndex(e.getColumn(), e.getFirstRow());
                 if(type.equals("shape")){
-                    List<BasePropType> list = new ArrayList<>();
-                    list.add(new BasePropType("test", "string", true));
-                    ShapePropTypesDialog dialog = new ShapePropTypesDialog(list);
+                    String propName = (String) model.getValueAt(row, 0);
+                    HashMap extraData = (HashMap) model.getValueAt(row, 4);
+                    Object shapePropsObj = extraData.get("shapeProps");
+                    List<BasePropType> shapePropList = shapePropsObj != null ? ((List<?>) shapePropsObj).stream()
+                            .map(o->(BasePropType)o).collect(Collectors.toList()) : new ArrayList<>();
+                    ShapePropTypesDialog dialog = new ShapePropTypesDialog(shapePropList, propName );
                     dialog.pack();
                     dialog.setLocationRelativeTo(this);
-                    dialog.setOnSubmitListener(beans -> model.updateExtraData( row, "shapeProps", beans));
+                    dialog.setOnSubmitListener(beans -> model.updateExtraDataByName( row, "shapeProps", beans));
                     dialog.setVisible(true);
                 }
             }
@@ -146,7 +152,9 @@ public class PropTypesDialog extends JDialog {
         });
         // add button onClick event
         addPropBtn.addActionListener(e -> {
-            model.addRow(new PropTypeBean("","any", false, "manual added"));
+            PropTypeBean bean = new PropTypeBean("");
+            bean.setDescribe("manual added");
+            model.addRow(bean);
             int  rowCount = table.getRowCount();
             table.getSelectionModel().setSelectionInterval(rowCount-1 , rowCount- 1 );
             Rectangle rect = table.getCellRect(rowCount-1 ,  0 ,  true );
@@ -158,6 +166,9 @@ public class PropTypesDialog extends JDialog {
     }
 
     private void onOK() {
+        for (TableModelListener listener :model.getTableModelListeners()){
+            model.removeTableModelListener(listener);
+        }
         dispose();
         if(this.onSubmitListener!=null){
             Object selectItem = esVersionBox.getSelectedItem();
@@ -168,6 +179,9 @@ public class PropTypesDialog extends JDialog {
     }
 
     private void onCancel() {
+        for (TableModelListener listener :model.getTableModelListeners()){
+            model.removeTableModelListener(listener);
+        }
         dispose();
     }
 

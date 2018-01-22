@@ -32,6 +32,15 @@ public class ShapePropTypesModel extends DefaultTableModel  {
     this.setDataVector(data,columnNames);
   }
 
+  void reInitData(List<BasePropType> beans){
+    for (int i = 0; i < this.getRowCount(); i++) {
+      this.removeRow(i);
+    }
+    for (BasePropType bean : beans) {
+      this.addRow(bean);
+    }
+  }
+
   List<BasePropType> data2PropList(){
     Vector vector = this.getDataVector();
     List<BasePropType> propTypeBeans = new ArrayList<>();
