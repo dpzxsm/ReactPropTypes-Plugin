@@ -19,12 +19,9 @@ public class ButtonEditor extends DefaultCellEditor{
         editor = new JButton();
         editor.addActionListener(e -> {
         //这里调用自定义的事件处理方法
-            if (table != null) {
+            if (table != null && table.getModel() instanceof DefaultTableModel) {
                 fireEditingStopped();
-                if (table.getModel() instanceof PropTypesModel) {
-                    PropTypesModel model = (PropTypesModel) table.getModel();
-                    model.removeRow(row);
-                }
+                ((DefaultTableModel)table.getModel()).removeRow(row);
             }
         });
 

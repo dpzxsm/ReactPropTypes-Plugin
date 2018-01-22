@@ -4,42 +4,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PropTypeBean {
-    // public
-    public String name;
-    public String type;
-    public boolean isRequired;
-
+public class PropTypeBean extends BasePropType{
     // private
     private String describe;
     private String defaultValue;
 
     // special data
-    private List<ShapePropType> shapePropTypeList;
+    private List<BasePropType> shapePropTypeList;
 
     public PropTypeBean(String name, String type, boolean isRequired) {
-        this.name = name;
-        this.type = type;
-        this.isRequired = isRequired;
+        super(name, type, isRequired);
     }
 
     public PropTypeBean(String name, String type, boolean isRequired, String describe) {
-        this.name = name;
-        this.type = type;
-        this.isRequired = isRequired;
+        super(name, type, isRequired);
         this.describe = describe;
     }
 
     public PropTypeBean(String name, String type, boolean isRequired, String describe, String defaultValue) {
-        this.name = name;
-        this.type = type;
-        this.isRequired = isRequired;
+        super(name, type, isRequired);
         this.describe = describe;
         this.defaultValue = defaultValue;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Nullable
@@ -60,11 +45,11 @@ public class PropTypeBean {
         this.defaultValue = defaultValue;
     }
 
-    public List<ShapePropType> getShapePropTypeList() {
+    public List<BasePropType> getShapePropTypeList() {
         return shapePropTypeList;
     }
 
-    public void setShapePropTypeList(List<ShapePropType> shapePropTypeList) {
+    public void setShapePropTypeList(List<BasePropType> shapePropTypeList) {
         this.shapePropTypeList = shapePropTypeList;
     }
 }

@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer{
 
-    ComboBoxRenderer() {
+    ComboBoxRenderer(boolean showAllType) {
         super(new String[]{
                 "any",
                 "string",
@@ -16,8 +16,10 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
                 "number",
                 "array",
                 "symbol",
-                "shape"
         });
+        if(showAllType){
+            this.addItem("shape");
+        }
         this.setEditable(false);
         this.setLightWeightPopupEnabled(false);
     }

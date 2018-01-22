@@ -5,16 +5,16 @@ import com.intellij.ui.table.JBTable;
 import com.suming.plugin.bean.*;
 import com.suming.plugin.bean.Component;
 import com.suming.plugin.persist.SettingService;
-import com.suming.plugin.utils.PropTypesHelper;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
@@ -28,6 +28,7 @@ public class PropTypesDialog extends JDialog {
     private JComboBox importBox;
     private JCheckBox handleDefaultPropCheckBox;
     private JTable table;
+    private PropTypesModel model;
     private onSubmitListener onSubmitListener;
     private SettingService settingService = ServiceManager.getService(SettingService.class);
 
@@ -35,7 +36,7 @@ public class PropTypesDialog extends JDialog {
         this.onSubmitListener = onSubmitListener;
     }
 
-    public PropTypesDialog(List<PropTypeBean> paramList ,Component component) {
+    public PropTypesDialog(List<PropTypeBean> propTypeList ,Component component) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -56,35 +57,32 @@ public class PropTypesDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         // init Table
-        initTable(paramList);
+        initTable(propTypeList);
         // init other widget
         initOtherWidgets(component);
     }
 
-    private List<PropTypeBean> data2ParamList(){
-        PropTypesModel model = (PropTypesModel) table.getModel();
-        Vector vector = model.getDataVector();
-        List<PropTypeBean> propTypeBeans = new ArrayList<>();
-        for(Object a : vector){
-            if(a instanceof Vector){
-                Object[] o =  ((Vector) a).toArray();
-                if(o[0].toString().trim().equals("")) continue;
-                boolean isRequired = o[2].toString().equals("true");
-                String defaultValue = o[3] == null ? null : o[3].toString();
-                propTypeBeans.add(new PropTypeBean(o[0].toString(),o[1].toString(),isRequired , "", defaultValue));
-            }
-        }
-        // sort by name
-        return propTypeBeans.stream()
-                .filter(PropTypesHelper.distinctByKey(PropTypeBean::getName))
-                .sorted(Comparator.comparing(PropTypeBean::getName))
-                .collect(Collectors.toList());
-    }
-
-    private void initTable(List<PropTypeBean> paramList){
+    private void initTable(List<PropTypeBean> propTypeList){
         table = new JBTable();
-        PropTypesModel model = new PropTypesModel();
-        model.initData(paramList);
+        model = new PropTypesModel();
+        model.addTableModelListener(e -> {
+            // 1 表示是选中的type
+            int column = e.getColumn();
+            if(e.getColumn() == 1 && e.getFirstRow() == e.getLastRow()){
+                int row = e.getFirstRow();
+                String type = model.getValueFromIndex(e.getColumn(), e.getFirstRow());
+                if(type.equals("shape")){
+                    List<BasePropType> list = new ArrayList<>();
+                    list.add(new BasePropType("test", "string", true));
+                    ShapePropTypesDialog dialog = new ShapePropTypesDialog(list);
+                    dialog.pack();
+                    dialog.setLocationRelativeTo(this);
+                    dialog.setOnSubmitListener(beans -> model.updateExtraData( row, "shapeProps", beans));
+                    dialog.setVisible(true);
+                }
+            }
+        });
+        model.initData(propTypeList);
         table.setModel(model);
         final DefaultListSelectionModel defaultListSelectionModel = new DefaultListSelectionModel();
         defaultListSelectionModel.setSelectionMode(SINGLE_SELECTION);
@@ -101,8 +99,8 @@ public class PropTypesDialog extends JDialog {
         TableColumn operationColumn = table.getColumn("ops");
         nameColumn.setCellRenderer(new NameTextRenderer(true, "Please input name !"));
         nameColumn.setCellEditor(new DefaultCellEditor(new NameTextRenderer(false, "Please input name !")));
-        typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer()));
-        typeColumn.setCellRenderer(new ComboBoxRenderer());
+        typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer(true)));
+        typeColumn.setCellRenderer(new ComboBoxRenderer(true));
         typeColumn.setMaxWidth(150);
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
@@ -148,7 +146,6 @@ public class PropTypesDialog extends JDialog {
         });
         // add button onClick event
         addPropBtn.addActionListener(e -> {
-            PropTypesModel model = (PropTypesModel) table.getModel();
             model.addRow(new PropTypeBean("","any", false, "manual added"));
             int  rowCount = table.getRowCount();
             table.getSelectionModel().setSelectionInterval(rowCount-1 , rowCount- 1 );
@@ -166,7 +163,7 @@ public class PropTypesDialog extends JDialog {
             Object selectItem = esVersionBox.getSelectedItem();
             ESVersion esVersion = selectItem==null?ESVersion.ES6:ESVersion.valueOf(selectItem.toString());
             ImportMode importMode = settingService.getState().getImportMode();
-            this.onSubmitListener.onSubmit(data2ParamList() ,importMode ,esVersion , handleDefaultPropCheckBox.isSelected());
+            this.onSubmitListener.onSubmit(model.data2PropList() ,importMode ,esVersion , handleDefaultPropCheckBox.isSelected());
         }
     }
 
