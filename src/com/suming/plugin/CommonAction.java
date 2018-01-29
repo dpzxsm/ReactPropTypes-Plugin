@@ -296,16 +296,17 @@ abstract class CommonAction extends AnAction {
           // 为防止死循环， 所以不考虑reset对象的解析赋值
           propTypeBeans.addAll(findPropsNameListWithIdentityReference(property.getName(),parentElement));
         }else if(firstChild instanceof JSVariable){
-          String type = "any";
+          PropTypeBean bean = new PropTypeBean(property.getName());
           if(initializer != null){
-            type = PropTypesHelper.getPropTypeByValue(initializer.getText());
+            bean.setType(PropTypesHelper.getPropTypeByValue(initializer.getText()));
+            bean.setDefaultValue(initializer.getText());
           }else if(owner != null){
             String ownerStr = owner.getText();
             if(ownerStr.startsWith("{") && ownerStr.endsWith("}")){
-              type = "object";
+              bean.setType("'object'");
             }
           }
-          propTypeBeans.add(new PropTypeBean(property.getName(), type, false));
+          propTypeBeans.add(bean);
         }
       }
     }

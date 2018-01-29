@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
-  <version>1.0.8</version>
+  <version>1.0.9</version>
   <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Su Ming</vendor>
 
   <description><![CDATA[
@@ -18,9 +18,9 @@
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Fixed the bug can't work in the Stateless Component<br>
-      2.If your component has a default value for props, the plugin will fill the default type to the table<br>
-      3.show the describe about props's source<br>
+      1.Delete the describe about props's source<br>
+      2.Support PropTypes.shape<br>
+      3.Support generate defaultProps<br>
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
