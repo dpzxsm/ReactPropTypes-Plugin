@@ -27,17 +27,19 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
-import com.suming.plugin.bean.*;
+import com.suming.plugin.bean.Component;
+import com.suming.plugin.bean.ComponentType;
+import com.suming.plugin.bean.ESVersion;
+import com.suming.plugin.bean.PropTypeBean;
 import com.suming.plugin.utils.PropTypesHelper;
 import com.suming.plugin.utils.SelectWordUtilCompat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 abstract class CommonAction extends AnAction {
@@ -71,7 +73,8 @@ abstract class CommonAction extends AnAction {
     List<PropTypeBean> newPropNameList = new ArrayList<>();
     List<PropTypeBean> usePropNameList = new ArrayList<>();
     // find all use propTypes
-    usePropNameList.addAll(findPropsNameList(component));
+    List<PropTypeBean> allPropNameList = findPropsNameList(component);
+    usePropNameList.addAll(allPropNameList);
 
     // filter exist list
     PsiElement expression = getPropTypeElementByName(file,selectedText);
@@ -262,20 +265,12 @@ abstract class CommonAction extends AnAction {
       // ES5 is not supported for the time being
     }
     // maybe have duplicate data, so must distinct
+    HashSet<Integer> reverseSet =new HashSet<>();
+    reverseSet.add(1);
+    reverseSet.add(3);
     return paramList.stream()
-            .sorted((o1, o2) -> {
-              if(o1.name.equals(o2.name)){
-                if(o1.type.equals(o2.type)){
-                  return  0;
-                }else if(o2.type.equals("any")){
-                  return -1;
-                }else {
-                  return  1;
-                }
-              }else {
-               return o1.name.compareTo(o2.name);
-              }
-            })
+            .sorted(PropTypesHelper.sortByKey(reverseSet, PropTypeBean:: getName, PropTypeBean:: getType,
+                    PropTypeBean:: getDefaultValue, PropTypeBean::isRequired))
             .filter(PropTypesHelper.distinctByKey(PropTypeBean::getName))
             .collect(Collectors.toList());
   }
