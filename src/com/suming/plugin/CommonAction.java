@@ -71,10 +71,11 @@ abstract class CommonAction extends AnAction {
     }
     // create a empty list
     List<PropTypeBean> newPropNameList = new ArrayList<>();
-    List<PropTypeBean> usePropNameList = new ArrayList<>();
     // find all use propTypes
-    List<PropTypeBean> allPropNameList = findPropsNameList(component);
-    usePropNameList.addAll(allPropNameList);
+    List<PropTypeBean> usePropNameList = findPropsNameList(component);
+
+    // add to new list
+    newPropNameList.addAll(usePropNameList);
 
     // filter exist list
     PsiElement expression = getPropTypeElementByName(file,selectedText);
@@ -87,7 +88,6 @@ abstract class CommonAction extends AnAction {
           }
           if(i == existPropNameList.size() -1){
             propTypeBean.setDescribe("new added");
-            newPropNameList.add(propTypeBean);
           }
         }
       }
@@ -98,17 +98,15 @@ abstract class CommonAction extends AnAction {
           }
           if(i == usePropNameList.size() -1){
             propTypeBean.setDescribe("never used");
+            newPropNameList.add(0, propTypeBean);
           }
         }
       }
-      newPropNameList.addAll(existPropNameList);
       if(expression instanceof ES6FieldImpl){
         component.setEsVersion(ESVersion.ES7);
       }else {
         component.setEsVersion(ESVersion.ES6);
       }
-    }else {
-      newPropNameList.addAll(usePropNameList);
     }
 
     // filter default propTypes
