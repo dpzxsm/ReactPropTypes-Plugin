@@ -2,10 +2,13 @@ package com.suming.plugin.bean;
 
 public class Setting {
 
-    ESVersion esVersion;
-    ImportMode importMode;
+    private ESVersion esVersion = ESVersion.ES6;
+    private ImportMode importMode = ImportMode.Disabled;
 
-    boolean isNeedDefault = false;
+    private int indent = 2;
+
+    private boolean noSemiColons = true;
+    private boolean isNeedDefault = false;
 
     public Setting() {
     }
@@ -26,6 +29,13 @@ public class Setting {
         this.importMode = importMode;
     }
 
+    public int getIndent() {
+        return indent;
+    }
+
+    public void setIndent(int indent) {
+        this.indent = indent;
+    }
 
     public boolean isNeedDefault() {
         return isNeedDefault;
@@ -33,5 +43,13 @@ public class Setting {
 
     public void setNeedDefault(boolean needDefault) {
         isNeedDefault = needDefault;
+    }
+
+    public boolean isNoSemiColons() {
+        return noSemiColons;
+    }
+
+    public void setNoSemiColons(boolean noSemiColons) {
+        this.noSemiColons = noSemiColons;
     }
 }

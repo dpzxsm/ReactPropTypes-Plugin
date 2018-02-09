@@ -54,6 +54,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.suming.plugin.persist.SettingService" />
+    <applicationConfigurable instance="com.suming.plugin.ui.config.SettingEntry"/>
   </extensions>
 
 </idea-plugin>
