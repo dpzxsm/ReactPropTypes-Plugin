@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
-  <version>1.0.9</version>
+  <version>1.1.0</version>
   <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Su Ming</vendor>
 
   <description><![CDATA[
@@ -9,18 +9,26 @@
 
       Usage Instructions:<br>
         1. Select or take the cursor in your Component's name<br>
-        2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press
+        2. Press command + N (Windows is alt + insert) show Generate Group and click PropTypesGenerate, or press
            shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS<br>
         3. Edit the PropTypes Table to modify default type<br>
 
-      If you have any question or want to see more detail introductions,  you can jump to Github.<br>
+      If you have any question , you can leave a issue in <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>.<br>
+
+      使用介绍：
+         1. 选中你的组件名称或者将光标移动到组件的名称上
+         2. 按下command + N (Windows 是 alt + insert) 显示 Generate Group 并且点击 PropTypesGenerate, 或者直接按下快捷键
+            shift + command + alt + P (Windows 是 shift + ctrl + alt + P) 在macOs系统中<br>
+         3. 接下来就你可以在弹出的弹框中看到即将生成的PropType列表，并且你可以自由编辑它们。
+
+      如果你在使用过程中遇到了任何问题，或者想了解插件更多的使用方法，都可以在 <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
+      中留言
     ]]></description>
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Delete the describe about props's source<br>
-      2.Support PropTypes.shape<br>
-      3.Support generate defaultProps<br>
+      1.Fix a bug when you manual added a PropType will throw a error<br>
+      2.Support Preference setting for the Code Generate Style <br>
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
