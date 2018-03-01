@@ -15,10 +15,6 @@ import org.jetbrains.annotations.Nullable;
 public class SettingService implements PersistentStateComponent<Setting> {
     private Setting mSetting = new Setting();
 
-    public static SettingService getInstance(Project project) {
-        return project.getComponent(SettingService.class);
-    }
-
     @NotNull
     @Override
     public Setting getState() {

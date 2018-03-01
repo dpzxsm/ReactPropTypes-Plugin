@@ -102,4 +102,15 @@ public class PropTypesHelper {
     }
     return shapePropList;
   }
+
+  public static String getBlank(int count) {
+    StringBuilder st = new StringBuilder();
+    if (count < 0) {
+      count = 0;
+    }
+    for (int i = 0; i < count; i++) {
+      st.append(" ");
+    }
+    return st.toString();
+  }
 }

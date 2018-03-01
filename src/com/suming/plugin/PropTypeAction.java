@@ -2,28 +2,27 @@ package com.suming.plugin;
 
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileContentsChangedAdapter;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileManagerListener;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiWhiteSpace;
 import com.suming.plugin.bean.*;
+import com.suming.plugin.persist.SettingService;
 import com.suming.plugin.ui.PropTypesDialog;
+import com.suming.plugin.utils.PropTypesHelper;
 import com.suming.plugin.utils.PsiElementHelper;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PropTypeAction extends CommonAction {
+  private SettingService settingService = ServiceManager.getService(SettingService.class);
 
   @Override
   void actionPerformed(Project project,
@@ -129,7 +128,7 @@ public class PropTypeAction extends CommonAction {
                         true, false));
       }
     } else {
-      TextRange textRange = (isES7 ? es7Element : es6Element).getLastChild().getTextRange();
+      TextRange textRange = (isES7 ? es7Element : es6Element).getParent().getTextRange();
       document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(),
               getInsertDefaultPropsString(componentName, beans, false, isES7));
     }
@@ -164,7 +163,7 @@ public class PropTypeAction extends CommonAction {
                         true, false));
       }
     } else {
-      TextRange textRange = (isES7 ? es7Element : es6Element).getLastChild().getTextRange();
+      TextRange textRange = (isES7 ? es7Element : es6Element).getParent().getTextRange();
       document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(),
               getInsertPropTypeCodeString(componentName, beans, false, isES7));
     }
@@ -172,18 +171,18 @@ public class PropTypeAction extends CommonAction {
 
   private String getInsertPropTypeCodeString(String componentName, List<PropTypeBean> beans,
                                              boolean isNewPropTypes, boolean isES7) {
+    int indent = settingService.getState().getIndent();
+    boolean noSemiColons = settingService.getState().isNoSemiColons();
     StringBuilder sb = new StringBuilder();
     String propsObjBlank = isES7 ? "  " : "";
-    String propsBlank = propsObjBlank + "  ";
-    if (isNewPropTypes) {
-      if (isES7) {
-        sb.append("static propTypes = {\n");
-      } else {
-        sb.append("\n\n");
-        sb.append(componentName).append(".propTypes = {\n");
-      }
+    String propsBlank = propsObjBlank + PropTypesHelper.getBlank(indent);
+    if (isES7) {
+      sb.append("static propTypes = {\n");
     } else {
-      sb.append("{\n");
+      if(isNewPropTypes){
+        sb.append("\n\n");
+      }
+      sb.append(componentName).append(".propTypes = {\n");
     }
     for (int i = 0; i < beans.size(); i++) {
       sb.append(propsBlank).append(beans.get(i).name).append(": PropTypes.");
@@ -194,7 +193,7 @@ public class PropTypeAction extends CommonAction {
           int shapePropSize = shapePropList.size();
           sb.append(shapePropSize > 0 ? "({\n" : "()" );
           for (int j = 0; j <shapePropSize; j++) {
-            sb.append(propsBlank).append("  ").append(shapePropList.get(j).name)
+            sb.append(propsBlank).append(PropTypesHelper.getBlank(indent)).append(shapePropList.get(j).name)
                     .append(": PropTypes.").append(shapePropList.get(j).type);
             if (shapePropList.get(j).isRequired) {
               sb.append(".isRequired");
@@ -214,27 +213,37 @@ public class PropTypeAction extends CommonAction {
       if (i < beans.size() - 1) sb.append(",\n");
     }
     sb.append("\n").append(propsObjBlank).append("}");
+
+    if(!noSemiColons){
+      sb.append(";");
+    }
     return sb.toString();
   }
 
   private String getInsertDefaultPropsString(String componentName, List<PropTypeBean> beans,
                                              boolean isNewPropTypes, boolean isES7) {
+    int indent = settingService.getState().getIndent();
+    boolean noSemiColons = settingService.getState().isNoSemiColons();
     StringBuilder sb = new StringBuilder();
-    if (isNewPropTypes) {
-      if (isES7) {
-        sb.append("static defaultProps = {\n");
-      } else {
-        sb.append("\n\n");
-        sb.append(componentName).append(".defaultProps = {\n");
-      }
+    String propsObjBlank = isES7 ? "  " : "";
+    String propsBlank = propsObjBlank + PropTypesHelper.getBlank(indent);
+    if (isES7) {
+      sb.append("static defaultProps = {\n");
     } else {
-      sb.append("{\n");
+      if(isNewPropTypes){
+        sb.append("\n\n");
+      }
+      sb.append(componentName).append(".defaultProps = {\n");
     }
     for (int i = 0; i < beans.size(); i++) {
-      sb.append(isES7 ? "    " : "  ").append(beans.get(i).name).append(": ").append(beans.get(i).getDefaultValue());
+      sb.append(propsBlank).append(beans.get(i).name).append(": ").append(beans.get(i).getDefaultValue());
       if (i < beans.size() - 1) sb.append(",\n");
     }
-    sb.append("\n").append(isES7 ? "  " : "").append("}");
+    sb.append("\n").append(propsObjBlank).append("}");
+
+    if(!noSemiColons){
+      sb.append(";");
+    }
     return sb.toString();
   }
 }

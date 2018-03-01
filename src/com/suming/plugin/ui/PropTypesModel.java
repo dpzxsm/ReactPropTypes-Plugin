@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 class PropTypesModel extends DefaultTableModel{
 
     void addRow(PropTypeBean bean) {
+        HashMap<String,Object> extraData = new HashMap<>();
+        extraData.put("describe", bean.getDescribe());
         super.addRow(new Object[]{bean.name,bean.type,bean.isRequired,
-                bean.getDefaultValue() ,bean.getDescribe()});
+                bean.getDefaultValue() , extraData});
     }
 
     void initData(List<PropTypeBean> beans){

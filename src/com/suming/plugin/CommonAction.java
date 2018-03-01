@@ -33,6 +33,7 @@ import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
 import com.suming.plugin.utils.PropTypesHelper;
 import com.suming.plugin.utils.SelectWordUtilCompat;
+import org.apache.http.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,24 +82,24 @@ abstract class CommonAction extends AnAction {
     PsiElement expression = getPropTypeElementByName(file,selectedText);
     if(expression !=null){
       List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
-      for (PropTypeBean propTypeBean : usePropNameList){
-        for (int i = 0; i < existPropNameList.size(); i++) {
-          if(existPropNameList.get(i).name.equals(propTypeBean.name)){
-            break;
-          }
-          if(i == existPropNameList.size() -1){
-            propTypeBean.setDescribe("new added");
-          }
-        }
-      }
-      for (PropTypeBean propTypeBean : existPropNameList){
-        for (int i = 0; i < usePropNameList.size(); i++) {
-          if(usePropNameList.get(i).name.equals(propTypeBean.name)){
-            break;
-          }
-          if(i == usePropNameList.size() -1){
-            propTypeBean.setDescribe("never used");
-            newPropNameList.add(0, propTypeBean);
+      if (usePropNameList.size() == 0){
+        newPropNameList.addAll(existPropNameList);
+      }else {
+        for (PropTypeBean propTypeBean : existPropNameList){
+          for (int i = 0; i < usePropNameList.size(); i++) {
+            PropTypeBean usePropType = usePropNameList.get(i);
+            if(usePropType.name.equals(propTypeBean.name)){
+              if(TextUtils.isEmpty(usePropType.type)||!usePropType.type.equals("any")){
+                usePropType.setType(propTypeBean.type);
+              }
+              usePropType.setRequired(propTypeBean.isRequired);
+              usePropType.setShapePropTypeList(propTypeBean.getShapePropTypeList());
+              break;
+            }
+            if(i == usePropNameList.size() -1){
+              propTypeBean.setDescribe("never used");
+              newPropNameList.add(0, propTypeBean);
+            }
           }
         }
       }
@@ -114,7 +115,10 @@ abstract class CommonAction extends AnAction {
     for (PropTypeBean defaultPropType : defaultPropTypeList){
       for (int i = 0; i < newPropNameList.size(); i++) {
         if(newPropNameList.get(i).name.equals(defaultPropType.name)){
-          newPropNameList.get(i).type = defaultPropType.type;
+          PropTypeBean newProp = newPropNameList.get(i);
+          if(TextUtils.isEmpty(newProp.type) || newProp.type.equals("any")){
+            newPropNameList.get(i).setType(defaultPropType.type);
+          }
           newPropNameList.get(i).setDefaultValue(defaultPropType.getDefaultValue());
           break;
         }

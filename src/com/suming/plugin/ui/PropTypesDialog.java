@@ -1,19 +1,19 @@
 package com.suming.plugin.ui;
 
-import clojure.lang.Obj;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.table.JBTable;
 import com.suming.plugin.bean.*;
 import com.suming.plugin.bean.Component;
 import com.suming.plugin.persist.SettingService;
-import net.miginfocom.swing.MigLayout;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
