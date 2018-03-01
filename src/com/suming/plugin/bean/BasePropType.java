@@ -24,7 +24,11 @@ public class BasePropType {
   }
 
   public void setType(String type) {
-    this.type = type;
+    if(type != null && !type.equals("")){
+      this.type = type;
+    }else {
+      this.type = "any";
+    }
   }
 
   public boolean isRequired() {

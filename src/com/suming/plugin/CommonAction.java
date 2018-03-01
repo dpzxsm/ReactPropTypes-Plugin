@@ -89,7 +89,7 @@ abstract class CommonAction extends AnAction {
           for (int i = 0; i < usePropNameList.size(); i++) {
             PropTypeBean usePropType = usePropNameList.get(i);
             if(usePropType.name.equals(propTypeBean.name)){
-              if(TextUtils.isEmpty(usePropType.type)||!usePropType.type.equals("any")){
+              if(TextUtils.isEmpty(usePropType.type)|| usePropType.type.equals("any")){
                 usePropType.setType(propTypeBean.type);
               }
               usePropType.setRequired(propTypeBean.isRequired);
@@ -300,7 +300,7 @@ abstract class CommonAction extends AnAction {
           }else if(owner != null){
             String ownerStr = owner.getText();
             if(ownerStr.startsWith("{") && ownerStr.endsWith("}")){
-              bean.setType("'object'");
+              bean.setType("object");
             }
           }
           propTypeBeans.add(bean);
