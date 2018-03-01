@@ -15,14 +15,15 @@
 
       If you have any question , you can leave a issue in <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>.<br>
 
-      使用介绍：
+      使用介绍：<br>
          1. 选中你的组件名称或者将光标移动到组件的名称上
          2. 按下command + N (Windows 是 alt + insert) 显示 Generate Group 并且点击 PropTypesGenerate, 或者直接按下快捷键
             shift + command + alt + P (Windows 是 shift + ctrl + alt + P) 在macOs系统中<br>
-         3. 接下来就你可以在弹出的弹框中看到即将生成的PropType列表，并且你可以自由编辑它们。
+         3. 接下来就你可以在弹出的弹框中看到即将生成的PropType列表，并且你可以自由编辑它们。<br>
 
       如果你在使用过程中遇到了任何问题，或者想了解插件更多的使用方法，都可以在 <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
-      中留言
+      中留言<br>
+
     ]]></description>
 
   <change-notes><![CDATA[
