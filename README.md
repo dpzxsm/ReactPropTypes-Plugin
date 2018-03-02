@@ -25,3 +25,4 @@
 5. If your component has a default value for props, the plugin will fill the default type to the table.
 6. Show the describe about props's source
 7. Support PropTypes.shape and handle defaultProps
+8. You can custom your code generate's style 
