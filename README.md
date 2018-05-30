@@ -23,6 +23,5 @@
 3. If you select ES6 code style , the propTypes code will generate at the last line .Of cause, if you select ES7 code style, the propTypes code will generate at the component inside's first line.
 4. Double Click the row's name in the table, can modify distinguished name if not you expect, also support add a new row or delete what you not need.
 5. If your component has a default value for props, the plugin will fill the default type to the table.
-6. Show the describe about props's source
-7. Support PropTypes.shape and handle defaultProps
-8. You can custom your code generate's style 
+6. Support PropTypes.shape and handle defaultProps
+7. You can custom your code generate's style 
