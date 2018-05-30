@@ -153,7 +153,6 @@ public class PropTypesDialog extends JDialog {
         // add button onClick event
         addPropBtn.addActionListener(e -> {
             PropTypeBean bean = new PropTypeBean("");
-            bean.setDescribe("manual added");
             model.addRow(bean);
             int  rowCount = table.getRowCount();
             table.getSelectionModel().setSelectionInterval(rowCount-1 , rowCount- 1 );

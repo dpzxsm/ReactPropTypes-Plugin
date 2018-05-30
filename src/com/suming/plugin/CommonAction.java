@@ -97,7 +97,6 @@ abstract class CommonAction extends AnAction {
               break;
             }
             if(i == usePropNameList.size() -1){
-              propTypeBean.setDescribe("never used");
               newPropNameList.add(0, propTypeBean);
             }
           }
@@ -124,7 +123,7 @@ abstract class CommonAction extends AnAction {
         }
         if(i == newPropNameList.size() -1){
           PropTypeBean bean = new PropTypeBean(defaultPropType.name, defaultPropType.type,
-                  false, "never used", defaultPropType.getDefaultValue());
+                  false , defaultPropType.getDefaultValue());
           newPropNameList.add(bean);
         }
       }

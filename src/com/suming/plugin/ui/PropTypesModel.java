@@ -12,7 +12,6 @@ class PropTypesModel extends DefaultTableModel{
 
     void addRow(PropTypeBean bean) {
         HashMap<String,Object> extraData = new HashMap<>();
-        extraData.put("describe", bean.getDescribe());
         super.addRow(new Object[]{bean.name,bean.type,bean.isRequired,
                 bean.getDefaultValue() , extraData});
     }
@@ -30,9 +29,7 @@ class PropTypesModel extends DefaultTableModel{
             data[i][1] = beans.get(i).type;
             data[i][2] = beans.get(i).isRequired;
             data[i][3] = beans.get(i).getDefaultValue();
-//            // extra data
             HashMap<String,Object> extraData = new HashMap<>();
-            extraData.put("describe", beans.get(i).getDescribe());
             extraData.put("shapeProps", beans.get(i).getShapePropTypeList());
             data[i][4] = extraData;
         }
@@ -68,10 +65,8 @@ class PropTypesModel extends DefaultTableModel{
                 boolean isRequired = o[2].toString().equals("true");
                 String defaultValue = o[3] == null ? null : o[3].toString();
                 HashMap extraData = (HashMap) o[4];
-                Object describeObj = extraData.get("describe");
                 Object shapePropsObj = extraData.get("shapeProps");
-                String describe =  describeObj == null ? null : describeObj.toString();
-                PropTypeBean bean = new PropTypeBean(name, type ,isRequired , describe, defaultValue);
+                PropTypeBean bean = new PropTypeBean(name, type ,isRequired , defaultValue);
                 if(type!=null && type.equals("shape") && shapePropsObj !=null ){
                     List<BasePropType>  shapePropList = ((List<?>) shapePropsObj).stream()
                             .map(e->(BasePropType)e).collect(Collectors.toList());
