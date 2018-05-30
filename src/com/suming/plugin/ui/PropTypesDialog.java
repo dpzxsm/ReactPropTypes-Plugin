@@ -139,7 +139,7 @@ public class PropTypesDialog extends JDialog {
 
         this.esVersionBox.addActionListener(e -> {
             // current hasn't propTypes
-            if(component.getEsVersion() ==null){
+            if(component.getEsVersion() == null){
                 Object selectItem = esVersionBox.getSelectedItem();
                 ESVersion esVersion = ESVersion.valueOf(selectItem!=null?selectItem.toString():"ES6");
                 setting.setEsVersion(esVersion);

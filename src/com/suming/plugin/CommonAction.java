@@ -189,7 +189,7 @@ abstract class CommonAction extends AnAction {
   private Component getSelectComponent(String selectText, PsiFile file){
     ES6Class es6Class = getSelectES6Component(selectText,file);
     if(es6Class != null){
-      return new Component(es6Class, ComponentType.STANDARD, ESVersion.ES6);
+      return new Component(es6Class, ComponentType.STANDARD);
     }else {
       JSFunction statelessElement = getSelectStatelessComponent(selectText, file);
       if(statelessElement!=null){
