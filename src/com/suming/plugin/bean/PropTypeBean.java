@@ -41,4 +41,12 @@ public class PropTypeBean extends BasePropType{
     public void setShapePropTypeList(List<BasePropType> shapePropTypeList) {
         this.shapePropTypeList = shapePropTypeList;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof PropTypeBean){
+            return ((PropTypeBean) obj).name.equals(this.name);
+        }
+        return super.equals(obj);
+    }
 }

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 abstract class CommonAction extends AnAction {
@@ -302,7 +303,7 @@ abstract class CommonAction extends AnAction {
               bean.setType("object");
             }
           }
-          propTypeBeans.add(bean);
+          propTypeBeans.add(findPropsNameTypeAndSetType(bean, null, parentElement));
         }
       }
     }
@@ -342,6 +343,19 @@ abstract class CommonAction extends AnAction {
   }
 
   @NotNull
+  private PropTypeBean findPropsNameTypeAndSetType(PropTypeBean bean, @Nullable String identity, PsiElement psiElement){
+    String regStr = ".*" + (identity != null ? "\\s*\\." : "") + bean.name +"\\s*\\("+ ".*";
+    boolean isFunc = PsiTreeUtil.findChildrenOfType(psiElement, JSCallExpression.class)
+            .stream()
+            .anyMatch(o -> o.getText().matches(regStr));
+    // 暂时只能判断函数类型
+    if(isFunc){
+      bean.setType("func");
+    }
+    return bean;
+  }
+
+  @NotNull
   private List<PropTypeBean>  findPropsNameListWithIdentityReference(String identity, PsiElement psiElement){
     return PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
@@ -359,7 +373,7 @@ abstract class CommonAction extends AnAction {
             })
             .map(o -> ((JSReferenceExpressionImpl)o.getParent()).getTreeNext().getTreeNext().getText())
             .distinct()
-            .map(o -> new PropTypeBean(o,"any", false))
+            .map(o -> findPropsNameTypeAndSetType(new PropTypeBean(o,"any", false), identity,  psiElement))
             .collect(Collectors.toList());
   }
 
