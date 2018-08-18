@@ -14,6 +14,7 @@ public class SettingForm {
   private JCheckBox noSemiColonsCheckBox;
   private JCheckBox defaultPropsCheckBox;
   private JCheckBox inferTypeByPropsDestructure;
+  private JCheckBox inferTypeByDefaultProps;
   private JCheckBox inferTypeByPropsCall;
 
   JPanel getRoot() {
@@ -31,6 +32,7 @@ public class SettingForm {
     noSemiColonsCheckBox.setSelected(setting.isNoSemiColons());
     defaultPropsCheckBox.setSelected(setting.isNeedDefault());
     inferTypeByPropsDestructure.setSelected(setting.isInferByDestructure());
+    inferTypeByDefaultProps.setSelected(setting.isInferByDefaultProps());
     inferTypeByPropsCall.setSelected(setting.isInferByPropsCall());
   }
 
@@ -45,6 +47,7 @@ public class SettingForm {
     setting.setNoSemiColons(noSemiColonsCheckBox.isSelected());
     setting.setNeedDefault(defaultPropsCheckBox.isSelected());
     setting.setInferByDestructure(inferTypeByPropsDestructure.isSelected());
+    setting.setInferByDefaultProps(inferTypeByDefaultProps.isSelected());
     setting.setInferByPropsCall(inferTypeByPropsCall.isSelected());
     return setting;
   }

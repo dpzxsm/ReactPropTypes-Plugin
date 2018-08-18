@@ -441,7 +441,8 @@ abstract class CommonAction extends AnAction {
       for (JSProperty property : properties) {
         String name = property.getName();
         String value = property.getValue() != null ? property.getValue().getText() : "";
-        PropTypeBean bean = new PropTypeBean(name, PropTypesHelper.getPropTypeByValue(value), false);
+        boolean inferByDefaultProps = settingService.getState().isInferByDefaultProps();
+        PropTypeBean bean = new PropTypeBean(name, inferByDefaultProps ?  PropTypesHelper.getPropTypeByValue(value) : "any" , false);
         bean.setDefaultValue(value);
         paramList.add(bean);
       }

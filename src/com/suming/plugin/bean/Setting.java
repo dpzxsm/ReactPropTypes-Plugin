@@ -11,6 +11,7 @@ public class Setting {
     private boolean isNeedDefault = false;
 
     private boolean inferByDestructure = true;
+    private boolean inferByDefaultProps = true;
     private boolean inferByPropsCall = false;
 
     public Setting() {
@@ -64,6 +65,14 @@ public class Setting {
         this.inferByDestructure = inferByDestructure;
     }
 
+    public boolean isInferByDefaultProps() {
+        return inferByDefaultProps;
+    }
+
+    public void setInferByDefaultProps(boolean inferByDefaultProps) {
+        this.inferByDefaultProps = inferByDefaultProps;
+    }
+
     public boolean isInferByPropsCall() {
         return inferByPropsCall;
     }
@@ -71,4 +80,5 @@ public class Setting {
     public void setInferByPropsCall(boolean inferByPropsCall) {
         this.inferByPropsCall = inferByPropsCall;
     }
+
 }

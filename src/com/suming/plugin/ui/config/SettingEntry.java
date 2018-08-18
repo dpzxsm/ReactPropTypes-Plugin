@@ -36,7 +36,10 @@ public class SettingEntry implements Configurable{
             || !config.getEsVersion().equals(setting.getEsVersion())
             || config.getIndent() != setting.getIndent()
             || config.isNeedDefault() != setting.isNeedDefault()
-            || config.isNoSemiColons() != setting.isNoSemiColons());
+            || config.isNoSemiColons() != setting.isNoSemiColons()
+            || config.isInferByDestructure() != setting.isInferByDestructure()
+            || config.isInferByDefaultProps() != setting.isInferByDefaultProps()
+            || config.isInferByPropsCall() != setting.isInferByPropsCall());
   }
 
   @Override
