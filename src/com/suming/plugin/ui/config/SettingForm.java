@@ -3,7 +3,6 @@ package com.suming.plugin.ui.config;
 import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.ImportMode;
 import com.suming.plugin.bean.Setting;
-import com.suming.plugin.persist.SettingService;
 
 import javax.swing.*;
 
@@ -14,6 +13,8 @@ public class SettingForm {
   private JTextField indentInput;
   private JCheckBox noSemiColonsCheckBox;
   private JCheckBox defaultPropsCheckBox;
+  private JCheckBox inferTypeByPropsDestructure;
+  private JCheckBox inferTypeByPropsCall;
 
   JPanel getRoot() {
     return root;
@@ -29,6 +30,8 @@ public class SettingForm {
     indentInput.setText(setting.getIndent() + "");
     noSemiColonsCheckBox.setSelected(setting.isNoSemiColons());
     defaultPropsCheckBox.setSelected(setting.isNeedDefault());
+    inferTypeByPropsDestructure.setSelected(setting.isInferByDestructure());
+    inferTypeByPropsCall.setSelected(setting.isInferByPropsCall());
   }
 
   Setting getNewSetting(){
@@ -41,6 +44,8 @@ public class SettingForm {
     setting.setIndent(Integer.parseInt(indentInput.getText()));
     setting.setNoSemiColons(noSemiColonsCheckBox.isSelected());
     setting.setNeedDefault(defaultPropsCheckBox.isSelected());
+    setting.setInferByDestructure(inferTypeByPropsDestructure.isSelected());
+    setting.setInferByPropsCall(inferTypeByPropsCall.isSelected());
     return setting;
   }
 }
