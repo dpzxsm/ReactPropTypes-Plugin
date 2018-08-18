@@ -2,7 +2,7 @@
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
   <version>1.1.1</version>
-  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">Su Ming</vendor>
+  <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">苏铭(Su Ming)</vendor>
 
   <description><![CDATA[
       Auto Generate code for React's Component PropTypes (ES5 is not supported for the time being)<br>
@@ -28,8 +28,8 @@
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Fix a bug when you manual added a PropType will throw a error<br>
-      2.Support Preference setting for the Code Generate Style <br>
+      1.Support infer type by array's function call<br>
+      2.Support Preference setting for the PropTypes's type determine <br>
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
