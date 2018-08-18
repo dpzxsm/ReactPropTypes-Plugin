@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -31,20 +32,19 @@ import com.suming.plugin.bean.Component;
 import com.suming.plugin.bean.ComponentType;
 import com.suming.plugin.bean.ESVersion;
 import com.suming.plugin.bean.PropTypeBean;
+import com.suming.plugin.constants.ArrayFunctions;
+import com.suming.plugin.persist.SettingService;
 import com.suming.plugin.utils.PropTypesHelper;
 import com.suming.plugin.utils.SelectWordUtilCompat;
 import org.apache.http.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 abstract class CommonAction extends AnAction {
+  SettingService settingService = ServiceManager.getService(SettingService.class);
 
   void runCommand(Project project, final Runnable runnable) {
     CommandProcessor.getInstance().executeCommand(project, () -> ApplicationManager.getApplication().runWriteAction(runnable), "inject PropTypes", null);
@@ -80,51 +80,51 @@ abstract class CommonAction extends AnAction {
     newPropNameList.addAll(usePropNameList);
 
     // filter exist list
-    PsiElement expression = getPropTypeElementByName(file,selectedText);
-    if(expression !=null){
+    PsiElement expression = getPropTypeElementByName(file, selectedText);
+    if (expression != null) {
       List<PropTypeBean> existPropNameList = findPropsNameListInPropTypeObject(expression);
-      if (usePropNameList.size() == 0){
+      if (usePropNameList.size() == 0) {
         newPropNameList.addAll(existPropNameList);
-      }else {
-        for (PropTypeBean propTypeBean : existPropNameList){
+      } else {
+        for (PropTypeBean propTypeBean : existPropNameList) {
           for (int i = 0; i < usePropNameList.size(); i++) {
             PropTypeBean usePropType = usePropNameList.get(i);
-            if(usePropType.name.equals(propTypeBean.name)){
-              if(TextUtils.isEmpty(usePropType.type)|| usePropType.type.equals("any")){
+            if (usePropType.name.equals(propTypeBean.name)) {
+              if (TextUtils.isEmpty(usePropType.type) || usePropType.type.equals("any")) {
                 usePropType.setType(propTypeBean.type);
               }
               usePropType.setRequired(propTypeBean.isRequired);
               usePropType.setShapePropTypeList(propTypeBean.getShapePropTypeList());
               break;
             }
-            if(i == usePropNameList.size() -1){
+            if (i == usePropNameList.size() - 1) {
               newPropNameList.add(0, propTypeBean);
             }
           }
         }
       }
-      if(expression instanceof ES6FieldImpl){
+      if (expression instanceof ES6FieldImpl) {
         component.setEsVersion(ESVersion.ES7);
-      }else {
+      } else {
         component.setEsVersion(ESVersion.ES6);
       }
     }
 
     // filter default propTypes
-    List<PropTypeBean> defaultPropTypeList = findPropsNameListInDefaultPropsElement(getDefaultPropsElementByName(file,selectedText));
-    for (PropTypeBean defaultPropType : defaultPropTypeList){
+    List<PropTypeBean> defaultPropTypeList = findPropsNameListInDefaultPropsElement(getDefaultPropsElementByName(file, selectedText));
+    for (PropTypeBean defaultPropType : defaultPropTypeList) {
       for (int i = 0; i < newPropNameList.size(); i++) {
-        if(newPropNameList.get(i).name.equals(defaultPropType.name)){
+        if (newPropNameList.get(i).name.equals(defaultPropType.name)) {
           PropTypeBean newProp = newPropNameList.get(i);
-          if(TextUtils.isEmpty(newProp.type) || newProp.type.equals("any")){
+          if (TextUtils.isEmpty(newProp.type) || newProp.type.equals("any")) {
             newPropNameList.get(i).setType(defaultPropType.type);
           }
           newPropNameList.get(i).setDefaultValue(defaultPropType.getDefaultValue());
           break;
         }
-        if(i == newPropNameList.size() -1){
+        if (i == newPropNameList.size() - 1) {
           PropTypeBean bean = new PropTypeBean(defaultPropType.name, defaultPropType.type,
-                  false , defaultPropType.getDefaultValue());
+                  false, defaultPropType.getDefaultValue());
           newPropNameList.add(bean);
         }
       }
@@ -139,15 +139,15 @@ abstract class CommonAction extends AnAction {
   @Nullable
   String getSelectedText(Editor editor) {
     SelectionModel selectionModel = editor.getSelectionModel();
-    if(selectionModel.hasSelection()){
+    if (selectionModel.hasSelection()) {
       return selectionModel.getSelectedText();
-    }else {
+    } else {
       final ArrayList<TextRange> ranges = new ArrayList<>();
       final int offset = editor.getCaretModel().getOffset();
       SelectWordUtilCompat.addWordOrLexemeSelection(false, editor, offset, ranges, SelectWordUtilCompat.JAVASCRIPT_IDENTIFIER_PART_CONDITION);
-      if(ranges.size()>0){
-        return  editor.getDocument().getText(ranges.get(0));
-      }else {
+      if (ranges.size() > 0) {
+        return editor.getDocument().getText(ranges.get(0));
+      } else {
         return null;
       }
     }
@@ -158,27 +158,27 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  ES6Class getSelectES6Component(String selectText, PsiFile file){
+  ES6Class getSelectES6Component(String selectText, PsiFile file) {
     return PsiTreeUtil.findChildrenOfType(file, JSReferenceExpression.class)
             .stream()
             .filter(o -> o.getText().equals(selectText))
             .filter(o -> o.getParent() instanceof ES6Class)
-            .map(o -> (ES6Class)o.getParent())
+            .map(o -> (ES6Class) o.getParent())
             .findFirst()
             .orElse(null);
   }
 
   @Nullable
-  private JSFunction getSelectStatelessComponent(String selectText, PsiFile file){
+  private JSFunction getSelectStatelessComponent(String selectText, PsiFile file) {
     return PsiTreeUtil.findChildrenOfType(file, JSFunction.class)
             .stream()
-            .filter(o -> o.getName()!=null && o.getName().equals(selectText))
+            .filter(o -> o.getName() != null && o.getName().equals(selectText))
             .filter(o -> {
               XmlElement element = PsiTreeUtil.findChildrenOfType(o, XmlElement.class)
                       .stream()
                       .findFirst()
                       .orElse(null);
-              return  element != null;
+              return element != null;
             })
             .findFirst()
             .orElse(null);
@@ -186,38 +186,38 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  private Component getSelectComponent(String selectText, PsiFile file){
-    ES6Class es6Class = getSelectES6Component(selectText,file);
-    if(es6Class != null){
+  private Component getSelectComponent(String selectText, PsiFile file) {
+    ES6Class es6Class = getSelectES6Component(selectText, file);
+    if (es6Class != null) {
       return new Component(es6Class, ComponentType.STANDARD);
-    }else {
+    } else {
       JSFunction statelessElement = getSelectStatelessComponent(selectText, file);
-      if(statelessElement!=null){
+      if (statelessElement != null) {
         return new Component(statelessElement, ComponentType.STATELESS);
-      }else {
+      } else {
         return null;
       }
     }
   }
 
   @Nullable
-  boolean hasImportPropTypes(PsiFile file){
+  boolean hasImportPropTypes(PsiFile file) {
     boolean hasNew = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
             .stream()
             .filter(o -> o.getText().contains("\'prop-types\'"))
             .map(Objects::nonNull)
-            .reduce(false,(a,b) -> a||b);
+            .reduce(false, (a, b) -> a || b);
     boolean hasOld = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
             .stream()
             .filter(o -> o.getText().contains("\'react\'"))
             .filter(o -> o.getParent().getText().contains("PropTypes"))
             .map(Objects::nonNull)
-            .reduce(false,(a,b) -> a||b);
-    return hasNew||hasOld;
+            .reduce(false, (a, b) -> a || b);
+    return hasNew || hasOld;
   }
 
   @Nullable
-  ES6ImportDeclaration getReactImportDeclaration(PsiFile file){
+  ES6ImportDeclaration getReactImportDeclaration(PsiFile file) {
     return PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
             .stream()
             .filter(o -> o.getText().contains("\'react\'"))
@@ -228,7 +228,7 @@ abstract class CommonAction extends AnAction {
 
   }
 
-  int findFirstImportIndex(PsiFile file){
+  int findFirstImportIndex(PsiFile file) {
     PsiElement[] children = file.getChildren();
     for (PsiElement aChildren : children) {
       if (aChildren instanceof PsiWhiteSpace) {
@@ -247,32 +247,32 @@ abstract class CommonAction extends AnAction {
     PsiElement psiElement = component.getElement();
     ComponentType componentType = component.getComponentType();
     List<PropTypeBean> paramList = new ArrayList<>();
-    if(componentType == ComponentType.STATELESS){
+    if (componentType == ComponentType.STATELESS) {
       JSParameterList jsParameterList = ((JSFunction) psiElement).getParameterList();
-      JSParameterListElement propsParam = (jsParameterList != null && jsParameterList.getParameters().length>0)?
-              jsParameterList.getParameters()[0]: null;
-      if(propsParam != null){
-        if(propsParam instanceof JSDestructuringParameter){
+      JSParameterListElement propsParam = (jsParameterList != null && jsParameterList.getParameters().length > 0) ?
+              jsParameterList.getParameters()[0] : null;
+      if (propsParam != null) {
+        if (propsParam instanceof JSDestructuringParameter) {
           JSDestructuringElement parent = (JSDestructuringElement) propsParam;
           JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
           paramList.addAll(getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent()));
-        }else {
-          paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(),psiElement));
+        } else {
+          paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(), psiElement));
         }
       }
-    }else if (componentType == ComponentType.STANDARD){
-      paramList.addAll(findPropsNameListByPropsIdentity("props",psiElement));
-      paramList.addAll(findPropsNameListByPropsIdentity("nextProps",psiElement));
-    }else {
+    } else if (componentType == ComponentType.STANDARD) {
+      paramList.addAll(findPropsNameListByPropsIdentity("props", psiElement));
+      paramList.addAll(findPropsNameListByPropsIdentity("nextProps", psiElement));
+    } else {
       // ES5 is not supported for the time being
     }
     // maybe have duplicate data, so must distinct
-    HashSet<Integer> reverseSet =new HashSet<>();
+    HashSet<Integer> reverseSet = new HashSet<>();
     reverseSet.add(1);
     reverseSet.add(3);
     return paramList.stream()
-            .sorted(PropTypesHelper.sortByKey(reverseSet, PropTypeBean:: getName, PropTypeBean:: getType,
-                    PropTypeBean:: getDefaultValue, PropTypeBean::isRequired))
+            .sorted(PropTypesHelper.sortByKey(reverseSet, PropTypeBean::getName, PropTypeBean::getType,
+                    PropTypeBean::getDefaultValue, PropTypeBean::isRequired))
             .filter(PropTypesHelper.distinctByKey(PropTypeBean::getName))
             .collect(Collectors.toList());
   }
@@ -280,7 +280,7 @@ abstract class CommonAction extends AnAction {
 
   @NotNull
   private List<PropTypeBean> getPropsWithDestructuringProperty(JSDestructuringObject destructuringObject,
-                                                               PsiElement parentElement){
+                                                               PsiElement parentElement) {
     List<PropTypeBean> propTypeBeans = new ArrayList<>();
     PsiElement[] elements = destructuringObject.getChildren();
     for (PsiElement element : elements) {
@@ -288,19 +288,22 @@ abstract class CommonAction extends AnAction {
         JSDestructuringProperty property = (JSDestructuringProperty) element;
         JSInitializerOwner owner = property.getDestructuringElement();
         PsiElement firstChild = property.getFirstChild();
-        JSExpression initializer = owner!=null?owner.getInitializer():null ;
-        if(firstChild.getText().equals("...")){
-          // 为防止死循环， 所以不考虑reset对象的解析赋值
-          propTypeBeans.addAll(findPropsNameListWithIdentityReference(property.getName(),parentElement));
-        }else if(firstChild instanceof JSVariable){
+        JSExpression initializer = owner != null ? owner.getInitializer() : null;
+        if (firstChild.getText().equals("...")) {
+          // prevent loop
+          propTypeBeans.addAll(findPropsNameListWithIdentityReference(property.getName(), parentElement));
+        } else if (firstChild instanceof JSVariable) {
           PropTypeBean bean = new PropTypeBean(property.getName());
-          if(initializer != null){
-            bean.setType(PropTypesHelper.getPropTypeByValue(initializer.getText()));
-            bean.setDefaultValue(initializer.getText());
-          }else if(owner != null){
-            String ownerStr = owner.getText();
-            if(ownerStr.startsWith("{") && ownerStr.endsWith("}")){
-              bean.setType("object");
+          // only setting's inferByDestructure  equal true
+          if(settingService.getState().isInferByDestructure()){
+            if (initializer != null) {
+              bean.setType(PropTypesHelper.getPropTypeByValue(initializer.getText()));
+              bean.setDefaultValue(initializer.getText());
+            } else if (owner != null) {
+              String ownerStr = owner.getText();
+              if (ownerStr.startsWith("{") && ownerStr.endsWith("}")) {
+                bean.setType("object");
+              }
             }
           }
           propTypeBeans.add(findPropsNameTypeAndSetType(bean, null, parentElement));
@@ -311,87 +314,103 @@ abstract class CommonAction extends AnAction {
   }
 
   @NotNull
-  private List<PropTypeBean>  findPropsNameListByPropsIdentity(String identity, PsiElement psiElement){
+  private List<PropTypeBean> findPropsNameListByPropsIdentity(String identity, PsiElement psiElement) {
     // maybe contains default value, so find first
-    List<PropTypeBean> destructuringParamList =  PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
+    List<PropTypeBean> destructuringParamList = PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
             .filter(o -> o.getText().equals(identity))
             .filter(o -> o.getElementType().toString().equals("JS:IDENTIFIER"))
             .filter(o -> {
-              if(o.getParent() instanceof  JSReferenceExpressionImpl){
+              if (o.getParent() instanceof JSReferenceExpressionImpl) {
                 JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
-                if(parent.getParent() instanceof  JSDestructuringElementImpl
+                if (parent.getParent() instanceof JSDestructuringElementImpl
                         && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl
-                        && parent.getParent().getParent() !=null){
+                        && parent.getParent().getParent() != null) {
                   return true;
                 }
               }
-              return  false;
+              return false;
             })
             .map(o -> {
               JSDestructuringElementImpl parent = (JSDestructuringElementImpl) o.getParent().getParent();
               JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
               return getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent());
             })
-            .reduce(new ArrayList<>(),(a, b)-> {
+            .reduce(new ArrayList<>(), (a, b) -> {
               a.addAll(b);
               return a;
             });
-    List<PropTypeBean> paramList =  findPropsNameListWithIdentityReference(identity, psiElement);
+    List<PropTypeBean> paramList = findPropsNameListWithIdentityReference(identity, psiElement);
     paramList.addAll(destructuringParamList);
     return paramList;
   }
 
   @NotNull
-  private PropTypeBean findPropsNameTypeAndSetType(PropTypeBean bean, @Nullable String identity, PsiElement psiElement){
-    String regStr = ".*" + (identity != null ? "\\s*\\." : "") + bean.name +"\\s*\\("+ ".*";
+  private PropTypeBean findPropsNameTypeAndSetType(PropTypeBean bean, @Nullable String identity, PsiElement psiElement) {
+    // disable infer type
+    if(!settingService.getState().isInferByPropsCall()) return bean;
+
+    String firstReg = identity != null ? ".*\\s*" + identity + "\\s*\\.\\s*" : "";
+    String funcReg = firstReg + bean.name + "\\s*\\(" + ".*";
+
     boolean isFunc = PsiTreeUtil.findChildrenOfType(psiElement, JSCallExpression.class)
             .stream()
-            .anyMatch(o -> o.getText().matches(regStr));
-    // 暂时只能判断函数类型
-    if(isFunc){
+            .anyMatch(o -> o.getText().matches(funcReg));
+    // only infer func and array
+    if (isFunc) {
       bean.setType("func");
+    } else {
+      String arrayFuncString = Arrays.stream(ArrayFunctions.values())
+              .map(o -> (o.name()))
+              .reduce("", (a, b) -> a + '|' + b);
+      String arrayReg = firstReg + bean.name + "\\s*\\.\\s*" + arrayFuncString.replaceFirst("^\\|", "(") + ")" + ".*";
+      boolean isArray = PsiTreeUtil.findChildrenOfType(psiElement, JSCallExpression.class)
+              .stream()
+              .anyMatch(o -> o.getText().matches(arrayReg));
+      if (isArray) {
+        bean.setType("array");
+      }
     }
     return bean;
   }
 
   @NotNull
-  private List<PropTypeBean>  findPropsNameListWithIdentityReference(String identity, PsiElement psiElement){
+  private List<PropTypeBean> findPropsNameListWithIdentityReference(String identity, PsiElement psiElement) {
     return PsiTreeUtil.findChildrenOfType(psiElement, LeafPsiElement.class)
             .stream()
             .filter(o -> o.getText().equals(identity))
             .filter(o -> o.getElementType().toString().equals("JS:IDENTIFIER"))
             .filter(o -> {
-              if(o.getParent() instanceof JSReferenceExpressionImpl){
+              if (o.getParent() instanceof JSReferenceExpressionImpl) {
                 JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
-                if(parent.getTreeNext()!=null && parent.getTreeNext().getElementType().toString().equals("JS:DOT")
-                        &&parent.getTreeNext().getTreeNext()!=null){
+                if (parent.getTreeNext() != null && parent.getTreeNext().getElementType().toString().equals("JS:DOT")
+                        && parent.getTreeNext().getTreeNext() != null) {
                   return true;
                 }
               }
-              return  false;
+              return false;
             })
-            .map(o -> ((JSReferenceExpressionImpl)o.getParent()).getTreeNext().getTreeNext().getText())
+            .map(o -> ((JSReferenceExpressionImpl) o.getParent()).getTreeNext().getTreeNext().getText())
             .distinct()
-            .map(o -> findPropsNameTypeAndSetType(new PropTypeBean(o,"any", false), identity,  psiElement))
+            .map(o -> findPropsNameTypeAndSetType(new PropTypeBean(o, "any", false), identity, psiElement))
             .collect(Collectors.toList());
   }
 
 
   @Nullable
-  PsiElement getES7FieldElementByName(PsiFile file, String componentName , String fieldName ){
-    ES6Class es6Class = getSelectES6Component(componentName,file);
-    if(es6Class == null) return  null;
-    return  PsiTreeUtil.findChildrenOfType(es6Class, ES6FieldImpl.class)
+  PsiElement getES7FieldElementByName(PsiFile file, String componentName, String fieldName) {
+    ES6Class es6Class = getSelectES6Component(componentName, file);
+    if (es6Class == null) return null;
+    return PsiTreeUtil.findChildrenOfType(es6Class, ES6FieldImpl.class)
             .stream()
             .filter(o -> Objects.equals(o.getName(), fieldName))
-            .filter(o -> o.getJSContext() == JSContext.STATIC )
+            .filter(o -> o.getJSContext() == JSContext.STATIC)
             .findFirst()
             .orElse(null);
   }
 
   @Nullable
-  PsiElement getES6FieldByName(PsiFile file, String componentName , String fieldName){
+  PsiElement getES6FieldByName(PsiFile file, String componentName, String fieldName) {
     return PsiTreeUtil.findChildrenOfType(file, JSDefinitionExpression.class)
             .stream()
             .filter(o -> o.getText().matches(componentName + "\\s*\\.\\s*" + fieldName))
@@ -403,94 +422,98 @@ abstract class CommonAction extends AnAction {
   }
 
   @Nullable
-  private PsiElement getES5PropTypeElementByName(PsiFile file, String componentName){
+  private PsiElement getES5PropTypeElementByName(PsiFile file, String componentName) {
     return null;
   }
 
   /**
    * Find defaultProps Object and to PropTypeBean List
+   *
    * @param expression
    * @return
    */
   @NotNull
-  List<PropTypeBean> findPropsNameListInDefaultPropsElement(PsiElement expression){
+  List<PropTypeBean> findPropsNameListInDefaultPropsElement(PsiElement expression) {
     List<PropTypeBean> paramList = new ArrayList<>();
-    if(expression!=null && expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
+    if (expression != null && expression.getLastChild() != null && expression.getLastChild() instanceof JSObjectLiteralExpression) {
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
         String name = property.getName();
-        String value = property.getValue()!=null?property.getValue().getText():"";
+        String value = property.getValue() != null ? property.getValue().getText() : "";
         PropTypeBean bean = new PropTypeBean(name, PropTypesHelper.getPropTypeByValue(value), false);
         bean.setDefaultValue(value);
         paramList.add(bean);
       }
     }
-    return  paramList;
+    return paramList;
   }
 
   /**
    * Find defaultProps Object from a JS File with componentName
+   *
    * @param file
    * @param componentName
    * @return
    */
   @Nullable
-  private PsiElement getDefaultPropsElementByName(PsiFile file, String componentName){
+  private PsiElement getDefaultPropsElementByName(PsiFile file, String componentName) {
     PsiElement es7Element = getES7FieldElementByName(file, componentName, "defaultProps");
-    if(es7Element == null) {
-      PsiElement es6Element = getES6FieldByName(file,componentName , "defaultProps");
-      if(es6Element == null){
-        return getES5PropTypeElementByName(file,componentName);
-      }else {
+    if (es7Element == null) {
+      PsiElement es6Element = getES6FieldByName(file, componentName, "defaultProps");
+      if (es6Element == null) {
+        return getES5PropTypeElementByName(file, componentName);
+      } else {
         return es6Element;
       }
-    }else {
+    } else {
       return es7Element;
     }
   }
 
   /**
    * Find propTypes Object and to PropTypeBean List
+   *
    * @param expression
    * @return
    */
   @NotNull
-  List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression){
+  List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression) {
     List<PropTypeBean> paramList = new ArrayList<>();
-    if(expression!=null && expression.getLastChild() != null &&  expression.getLastChild() instanceof JSObjectLiteralExpression){
+    if (expression != null && expression.getLastChild() != null && expression.getLastChild() instanceof JSObjectLiteralExpression) {
       JSObjectLiteralExpression literalExpression = (JSObjectLiteralExpression) expression.getLastChild();
       JSProperty[] properties = literalExpression.getProperties();
       for (JSProperty property : properties) {
-        if(property.getName() !=null && property.getLastChild().getText().contains("PropTypes")){
+        if (property.getName() != null && property.getLastChild().getText().contains("PropTypes")) {
           PropTypeBean bean = new PropTypeBean(property.getName());
-          PropTypesHelper.updatePropTypeFromCode(bean,property.getLastChild().getText());
+          PropTypesHelper.updatePropTypeFromCode(bean, property.getLastChild().getText());
           paramList.add(bean);
         }
 
       }
     }
-    return  paramList;
+    return paramList;
   }
 
   /**
    * Find propTypes Object from a JS File with componentName
+   *
    * @param file
    * @param componentName
    * @return
    */
   @Nullable
-  private PsiElement getPropTypeElementByName(PsiFile file, String componentName){
+  private PsiElement getPropTypeElementByName(PsiFile file, String componentName) {
     // ES7 is ES6Field , ES6 is JSDefinitionExpression, ES5 is JSField
     PsiElement es7Element = getES7FieldElementByName(file, componentName, "propTypes");
-    if(es7Element == null) {
-      PsiElement es6Element = getES6FieldByName(file,componentName , "propTypes");
-      if(es6Element == null){
-        return getES5PropTypeElementByName(file,componentName);
-      }else {
+    if (es7Element == null) {
+      PsiElement es6Element = getES6FieldByName(file, componentName, "propTypes");
+      if (es6Element == null) {
+        return getES5PropTypeElementByName(file, componentName);
+      } else {
         return es6Element;
       }
-    }else {
+    } else {
       return es7Element;
     }
   }

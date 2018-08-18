@@ -2,7 +2,6 @@ package com.suming.plugin;
 
 import com.intellij.lang.ecmascript6.psi.ES6Class;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -13,7 +12,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiWhiteSpace;
 import com.suming.plugin.bean.*;
-import com.suming.plugin.persist.SettingService;
 import com.suming.plugin.ui.PropTypesDialog;
 import com.suming.plugin.utils.PropTypesHelper;
 import com.suming.plugin.utils.PsiElementHelper;
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PropTypeAction extends CommonAction {
-  private SettingService settingService = ServiceManager.getService(SettingService.class);
 
   @Override
   void actionPerformed(Project project,
@@ -47,7 +44,7 @@ public class PropTypeAction extends CommonAction {
           List<PropTypeBean> defaultBeans = beans.stream()
                   .filter(o -> o.getDefaultValue() != null && !o.getDefaultValue().trim().equals(""))
                   .collect(Collectors.toList());
-          if(defaultBeans.size() > 0){
+          if (defaultBeans.size() > 0) {
             PsiFile nextFile = PsiFileFactory.getInstance(project).createFileFromText(file.getLanguage(), document.getText());
             insertDefaultPropsCodeString(document, nextFile, selectedText, defaultBeans, esVersion);
           }
@@ -179,20 +176,20 @@ public class PropTypeAction extends CommonAction {
     if (isES7) {
       sb.append("static propTypes = {\n");
     } else {
-      if(isNewPropTypes){
+      if (isNewPropTypes) {
         sb.append("\n\n");
       }
       sb.append(componentName).append(".propTypes = {\n");
     }
     for (int i = 0; i < beans.size(); i++) {
       sb.append(propsBlank).append(beans.get(i).name).append(": PropTypes.");
-      if("shape".equals(beans.get(i).type)){
+      if ("shape".equals(beans.get(i).type)) {
         List<BasePropType> shapePropList = beans.get(i).getShapePropTypeList();
         sb.append("shape");
-        if(shapePropList!=null){
+        if (shapePropList != null) {
           int shapePropSize = shapePropList.size();
-          sb.append(shapePropSize > 0 ? "({\n" : "()" );
-          for (int j = 0; j <shapePropSize; j++) {
+          sb.append(shapePropSize > 0 ? "({\n" : "()");
+          for (int j = 0; j < shapePropSize; j++) {
             sb.append(propsBlank).append(PropTypesHelper.getBlank(indent)).append(shapePropList.get(j).name)
                     .append(": PropTypes.").append(shapePropList.get(j).type);
             if (shapePropList.get(j).isRequired) {
@@ -200,11 +197,11 @@ public class PropTypeAction extends CommonAction {
             }
             if (j < shapePropList.size() - 1) sb.append(",\n");
           }
-          if(shapePropSize > 0 ){
+          if (shapePropSize > 0) {
             sb.append("\n").append(propsBlank).append("})");
           }
         }
-      }else {
+      } else {
         sb.append(beans.get(i).type);
       }
       if (beans.get(i).isRequired) {
@@ -214,7 +211,7 @@ public class PropTypeAction extends CommonAction {
     }
     sb.append("\n").append(propsObjBlank).append("}");
 
-    if(!noSemiColons){
+    if (!noSemiColons) {
       sb.append(";");
     }
     return sb.toString();
@@ -230,7 +227,7 @@ public class PropTypeAction extends CommonAction {
     if (isES7) {
       sb.append("static defaultProps = {\n");
     } else {
-      if(isNewPropTypes){
+      if (isNewPropTypes) {
         sb.append("\n\n");
       }
       sb.append(componentName).append(".defaultProps = {\n");
@@ -241,7 +238,7 @@ public class PropTypeAction extends CommonAction {
     }
     sb.append("\n").append(propsObjBlank).append("}");
 
-    if(!noSemiColons){
+    if (!noSemiColons) {
       sb.append(";");
     }
     return sb.toString();

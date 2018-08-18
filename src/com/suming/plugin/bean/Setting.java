@@ -10,6 +10,9 @@ public class Setting {
     private boolean noSemiColons = true;
     private boolean isNeedDefault = false;
 
+    private boolean inferByDestructure = true;
+    private boolean inferByPropsCall = false;
+
     public Setting() {
     }
 
@@ -51,5 +54,21 @@ public class Setting {
 
     public void setNoSemiColons(boolean noSemiColons) {
         this.noSemiColons = noSemiColons;
+    }
+
+    public boolean isInferByDestructure() {
+        return inferByDestructure;
+    }
+
+    public void setInferByDestructure(boolean inferByDestructure) {
+        this.inferByDestructure = inferByDestructure;
+    }
+
+    public boolean isInferByPropsCall() {
+        return inferByPropsCall;
+    }
+
+    public void setInferByPropsCall(boolean inferByPropsCall) {
+        this.inferByPropsCall = inferByPropsCall;
     }
 }
