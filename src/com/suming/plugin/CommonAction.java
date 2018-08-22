@@ -193,7 +193,7 @@ abstract class CommonAction extends AnAction {
     } else {
       JSFunction statelessElement = getSelectStatelessComponent(selectText, file);
       if (statelessElement != null) {
-        return new Component(statelessElement, ComponentType.STATELESS);
+        return new Component(statelessElement, ComponentType.STATELESS , ESVersion.ES6);
       } else {
         return null;
       }

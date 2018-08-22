@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.suming.react.PropTypes</id>
   <name>ReactPropTypes</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <vendor email="dpzxsm@sina.com" url="https://github.com/dpzxsm/ReactPropTypes-Plugin">苏铭(Su Ming)</vendor>
 
   <description><![CDATA[
@@ -30,6 +30,7 @@
       Hello, the Plugin has some changes:<br>
       1.Support infer type by array's function call<br>
       2.Support Preference setting for the PropTypes's type determine <br>
+      3.Fixed a bug that not work on functional components
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
