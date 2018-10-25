@@ -4,15 +4,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PropTypeBean extends BasePropType{
-    // private
+public class PropTypeBean extends BasePropType {
+    // default value
     private String defaultValue;
-
-    // special data
+    // shapeList
     private List<BasePropType> shapePropTypeList;
-
-    // special data JSON
-    private String propTypesJson;
 
     public PropTypeBean(String name) {
         super(name, "any", false);
@@ -45,17 +41,9 @@ public class PropTypeBean extends BasePropType{
         this.shapePropTypeList = shapePropTypeList;
     }
 
-    public String getPropTypesJson() {
-        return propTypesJson;
-    }
-
-    public void setPropTypesJson(String propTypesJson) {
-        this.propTypesJson = propTypesJson;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof PropTypeBean){
+        if (obj instanceof PropTypeBean) {
             return ((PropTypeBean) obj).name.equals(this.name);
         }
         return super.equals(obj);

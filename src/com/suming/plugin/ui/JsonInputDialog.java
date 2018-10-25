@@ -1,6 +1,5 @@
 package com.suming.plugin.ui;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,9 +7,10 @@ import com.suming.plugin.bean.BasePropType;
 import com.suming.plugin.utils.PropTypesHelper;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +56,7 @@ public class JsonInputDialog extends JDialog {
         List<BasePropType> basePropTypes = new ArrayList<>();
         JsonParser parser = new JsonParser();
         JsonElement element = parser.parse(jsonStr);
-        if(element !=null && element instanceof JsonObject){
+        if(element instanceof JsonObject){
           for (Object o : ((JsonObject) element).entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             String name = entry.getKey().toString();

@@ -86,7 +86,7 @@ public class PropTypesDialog extends JDialog {
                     dialog.setOnSubmitListener(beans -> model.updateExtraDataByName(row, "shapeProps", beans));
                     dialog.setVisible(true);
                 } else if (type.equals("arrayOf") || type.equals("objectOf")) {
-                    // show json input (array)
+                    // show singlePropTypeDiaLog
                 } else if (type.equals("oneOf")) {
                     // show json input (array)
                 } else if (type.equals("instanceOf")) {
