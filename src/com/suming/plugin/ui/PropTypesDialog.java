@@ -107,6 +107,7 @@ public class PropTypesDialog extends JDialog {
         nameColumn.setCellEditor(new DefaultCellEditor(new NameTextRenderer(false, "Please input name !")));
         typeColumn.setCellEditor(new DefaultCellEditor(new ComboBoxRenderer(true)));
         typeColumn.setCellRenderer(new ComboBoxRenderer(true));
+        typeColumn.setMinWidth(90);
         typeColumn.setMaxWidth(150);
         isRequireColumn.setCellEditor(new DefaultCellEditor(new CheckBoxRenderer()));
         isRequireColumn.setCellRenderer(new CheckBoxRenderer());
