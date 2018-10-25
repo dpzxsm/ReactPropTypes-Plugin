@@ -2,9 +2,7 @@ package com.suming.plugin.constants;
 
 public enum ArrayFunctions {
   concat,
-  copyWithin,
   every,
-  fill,
   filter,
   find,
   findIndex,
@@ -14,7 +12,6 @@ public enum ArrayFunctions {
   includes,
   join,
   map,
-  pop,
   reduce,
   reverse,
   slice,
