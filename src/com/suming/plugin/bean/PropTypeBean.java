@@ -11,6 +11,9 @@ public class PropTypeBean extends BasePropType{
     // special data
     private List<BasePropType> shapePropTypeList;
 
+    // special data JSON
+    private String propTypesJson;
+
     public PropTypeBean(String name) {
         super(name, "any", false);
     }
@@ -40,6 +43,14 @@ public class PropTypeBean extends BasePropType{
 
     public void setShapePropTypeList(List<BasePropType> shapePropTypeList) {
         this.shapePropTypeList = shapePropTypeList;
+    }
+
+    public String getPropTypesJson() {
+        return propTypesJson;
+    }
+
+    public void setPropTypesJson(String propTypesJson) {
+        this.propTypesJson = propTypesJson;
     }
 
     @Override
