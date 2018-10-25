@@ -174,11 +174,15 @@ abstract class CommonAction extends AnAction {
             .stream()
             .filter(o -> o.getName() != null && o.getName().equals(selectText))
             .filter(o -> {
-              XmlElement element = PsiTreeUtil.findChildrenOfType(o, XmlElement.class)
-                      .stream()
-                      .findFirst()
-                      .orElse(null);
-              return element != null;
+              if(this.settingService.getState().isUncheckFunctionalComponent()) {
+                return true;
+              }else {
+                XmlElement element = PsiTreeUtil.findChildrenOfType(o, XmlElement.class)
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
+                return element != null;
+              }
             })
             .findFirst()
             .orElse(null);

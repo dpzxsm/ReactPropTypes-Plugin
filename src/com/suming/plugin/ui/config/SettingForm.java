@@ -16,6 +16,7 @@ public class SettingForm {
   private JCheckBox inferTypeByPropsDestructure;
   private JCheckBox inferTypeByDefaultProps;
   private JCheckBox inferTypeByPropsCall;
+  private JCheckBox uncheckedFunctionalComponent;
 
   JPanel getRoot() {
     return root;
@@ -34,6 +35,7 @@ public class SettingForm {
     inferTypeByPropsDestructure.setSelected(setting.isInferByDestructure());
     inferTypeByDefaultProps.setSelected(setting.isInferByDefaultProps());
     inferTypeByPropsCall.setSelected(setting.isInferByPropsCall());
+    uncheckedFunctionalComponent.setSelected(setting.isUncheckFunctionalComponent());
   }
 
   Setting getNewSetting(){
@@ -49,6 +51,7 @@ public class SettingForm {
     setting.setInferByDestructure(inferTypeByPropsDestructure.isSelected());
     setting.setInferByDefaultProps(inferTypeByDefaultProps.isSelected());
     setting.setInferByPropsCall(inferTypeByPropsCall.isSelected());
+    setting.setUncheckFunctionalComponent(uncheckedFunctionalComponent.isSelected());
     return setting;
   }
 }

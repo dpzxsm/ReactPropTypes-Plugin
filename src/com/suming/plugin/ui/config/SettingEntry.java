@@ -39,7 +39,8 @@ public class SettingEntry implements Configurable{
             || config.isNoSemiColons() != setting.isNoSemiColons()
             || config.isInferByDestructure() != setting.isInferByDestructure()
             || config.isInferByDefaultProps() != setting.isInferByDefaultProps()
-            || config.isInferByPropsCall() != setting.isInferByPropsCall());
+            || config.isInferByPropsCall() != setting.isInferByPropsCall()
+            || config.isUncheckFunctionalComponent() != setting.isUncheckFunctionalComponent());
   }
 
   @Override

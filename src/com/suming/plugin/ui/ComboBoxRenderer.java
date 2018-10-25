@@ -16,6 +16,14 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
                 "number",
                 "array",
                 "symbol",
+                "arrayOf",
+                "element",
+                "instanceOf",
+                "node",
+                "objectOf",
+                "oneOf",
+                "oneOfType",
+                "exact"
         });
         if(showAllType){
             this.addItem("shape");

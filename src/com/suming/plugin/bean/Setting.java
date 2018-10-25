@@ -2,17 +2,22 @@ package com.suming.plugin.bean;
 
 public class Setting {
 
+    // Generate mode
     private ESVersion esVersion = ESVersion.ES6;
     private ImportMode importMode = ImportMode.Disabled;
 
+    // Code Style
     private int indent = 2;
-
     private boolean noSemiColons = true;
     private boolean isNeedDefault = false;
 
+    // Infer type
     private boolean inferByDestructure = true;
     private boolean inferByDefaultProps = true;
     private boolean inferByPropsCall = false;
+
+    // Others
+    private boolean uncheckFunctionalComponent = false;
 
     public Setting() {
     }
@@ -81,4 +86,11 @@ public class Setting {
         this.inferByPropsCall = inferByPropsCall;
     }
 
+    public boolean isUncheckFunctionalComponent() {
+        return uncheckFunctionalComponent;
+    }
+
+    public void setUncheckFunctionalComponent(boolean uncheckFunctionalComponent) {
+        this.uncheckFunctionalComponent = uncheckFunctionalComponent;
+    }
 }
