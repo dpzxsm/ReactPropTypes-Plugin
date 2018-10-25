@@ -28,6 +28,7 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
         if(showAllType){
             this.addItem("shape");
         }
+        this.setMaximumRowCount(10);
         this.setEditable(false);
         this.setLightWeightPopupEnabled(false);
     }
