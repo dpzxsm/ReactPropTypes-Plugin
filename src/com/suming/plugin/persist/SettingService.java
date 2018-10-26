@@ -1,14 +1,14 @@
 package com.suming.plugin.persist;
 
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.suming.plugin.bean.Setting;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @State(name = "SettingVariables",
         storages = {
-                @Storage(value = "setting", file = StoragePathMacros.WORKSPACE_FILE +"/Setting.xml")
+                @Storage("Setting.xml")
         }
 )
 
