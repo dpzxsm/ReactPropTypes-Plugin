@@ -31,6 +31,7 @@ class PropTypesModel extends DefaultTableModel{
             data[i][3] = beans.get(i).getDefaultValue();
             HashMap<String,Object> extraData = new HashMap<>();
             extraData.put("shapeProps", beans.get(i).getShapePropTypeList());
+            extraData.put("jsonData", beans.get(i).getJsonData());
             data[i][4] = extraData;
         }
         this.setDataVector(data,columnNames);
@@ -71,6 +72,10 @@ class PropTypesModel extends DefaultTableModel{
                     List<BasePropType>  shapePropList = ((List<?>) shapePropsObj).stream()
                             .map(e->(BasePropType)e).collect(Collectors.toList());
                     bean.setShapePropTypeList(shapePropList);
+                }
+                String jsonData = (String) extraData.get("jsonData");
+                if(type!=null && jsonData !=null && !jsonData.equals("")){
+                    bean.setJsonData(jsonData);
                 }
                 propTypeBeans.add(bean);
             }
