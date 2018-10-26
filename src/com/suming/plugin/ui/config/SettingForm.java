@@ -17,6 +17,7 @@ public class SettingForm {
   private JCheckBox inferTypeByDefaultProps;
   private JCheckBox inferTypeByPropsCall;
   private JCheckBox uncheckedFunctionalComponent;
+  private JCheckBox sortPropTypes;
 
   JPanel getRoot() {
     return root;
@@ -36,6 +37,7 @@ public class SettingForm {
     inferTypeByDefaultProps.setSelected(setting.isInferByDefaultProps());
     inferTypeByPropsCall.setSelected(setting.isInferByPropsCall());
     uncheckedFunctionalComponent.setSelected(setting.isUncheckFunctionalComponent());
+    sortPropTypes.setSelected(setting.isSortProps());
   }
 
   Setting getNewSetting(){
@@ -52,6 +54,7 @@ public class SettingForm {
     setting.setInferByDefaultProps(inferTypeByDefaultProps.isSelected());
     setting.setInferByPropsCall(inferTypeByPropsCall.isSelected());
     setting.setUncheckFunctionalComponent(uncheckedFunctionalComponent.isSelected());
+    setting.setSortProps(sortPropTypes.isSelected());
     return setting;
   }
 }

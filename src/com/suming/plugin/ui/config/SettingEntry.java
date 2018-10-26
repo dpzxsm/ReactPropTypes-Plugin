@@ -34,6 +34,7 @@ public class SettingEntry implements Configurable{
     Setting setting = form !=null ? form.getNewSetting() : null;
     return  setting !=null && (!config.getImportMode().equals(setting.getImportMode())
             || !config.getEsVersion().equals(setting.getEsVersion())
+            || config.isSortProps() != setting.isSortProps()
             || config.getIndent() != setting.getIndent()
             || config.isNeedDefault() != setting.isNeedDefault()
             || config.isNoSemiColons() != setting.isNoSemiColons()

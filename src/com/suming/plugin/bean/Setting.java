@@ -5,6 +5,7 @@ public class Setting {
     // Generate mode
     private ESVersion esVersion = ESVersion.ES6;
     private ImportMode importMode = ImportMode.Disabled;
+    private boolean sortProps = true;
 
     // Code Style
     private int indent = 2;
@@ -36,6 +37,14 @@ public class Setting {
 
     public void setImportMode(ImportMode importMode) {
         this.importMode = importMode;
+    }
+
+    public boolean isSortProps() {
+        return sortProps;
+    }
+
+    public void setSortProps(boolean sortProps) {
+        this.sortProps = sortProps;
     }
 
     public int getIndent() {
