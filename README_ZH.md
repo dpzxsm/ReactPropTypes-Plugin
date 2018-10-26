@@ -9,9 +9,13 @@
 2. 按下 command + N (Windows系统是alt + insert) 并且选择PropTypesGenerate, 或者按下shift + command + alt + P (Windows系统是shift + ctrl + alt + P) 在Mac系统中。
 3. 编辑弹框中的表格进行类型的修改稿
 
-## 预览图
+## 
+#### 类组件
 ![img](./ScreenShots/ScreenShot1.gif)
+#### 函数组件
 ![img](./ScreenShots/ScreenShot2.gif)
+#### 当你选择了`Shape`作为类型
+![img](./ScreenShots/ScreenShot3.gif)
 
 ## 特性(更新到1.1.2)
 1. 如果你没有选择任何文字，插件将自动找到高亮的文字作为选择的组件名称。
@@ -23,3 +27,4 @@
 6. 支持PropTypes.shape 和 defaultProps 生成。
 7. 你可以在偏好设置中自定义你的代码风格。
 8. 支持自动推断代码中的函数和数组类型，可以在设置中打开。
+9. 现在已经支持了所有的类型

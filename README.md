@@ -13,8 +13,12 @@
 3. Edit the PropTypes Table to modify default type
 
 ## Preview
+#### Class Components
 ![img](./ScreenShots/ScreenShot1.gif)
+#### Functional Components
 ![img](./ScreenShots/ScreenShot2.gif)
+#### When you select `Shape` as the PropType
+![img](./ScreenShots/ScreenShot3.gif)
 
 ## Features(update to v1.1.2)
 1. Get a heightLight text as component's name if you are not select any text.
@@ -26,3 +30,4 @@
 6. Support PropTypes.shape and handle defaultProps.
 7. You can custom your code generate's style.
 8. Supports automatic inference of functions and array types in code, and can be opened in the settings.
+9. Support full list of PropTypes
