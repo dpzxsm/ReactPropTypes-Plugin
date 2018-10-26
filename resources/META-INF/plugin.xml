@@ -28,9 +28,8 @@
 
   <change-notes><![CDATA[
       Hello, the Plugin has some changes:<br>
-      1.Support infer type by array's function call<br>
-      2.Support Preference setting for the PropTypes's type determine <br>
-      3.Fixed a bug that not work on functional components
+      1.Support full list of PropTypes<br>
+      2.Add some options for special usage<br>
       More info you can jump to <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin>github</a>
     ]]>
   </change-notes>
