@@ -20,7 +20,7 @@
 #### When you select `Shape` as the PropType
 ![img](./ScreenShots/ScreenShot3.gif)
 
-## Features(update to v1.1.2)
+## Features
 1. Get a heightLight text as component's name if you are not select any text.
 1. In the Standard ES6 component, the plugin can distinguish  props's reference and destructuring assignment with keyword "props" or "nextProps".
 2. In the Stateless component, only when your first param must be named "props" or a destructuring parameter the plugin can distinguished.
@@ -31,3 +31,8 @@
 7. You can custom your code generate's style.
 8. Supports automatic inference of functions and array types in code, and can be opened in the settings.
 9. Support full list of PropTypes
+
+
+## Next plan
+1. Developing a similar plugin on the VS Code's platform
+2. Support Flow Or TypeScript's TypeChecker, and not use PropTypes
