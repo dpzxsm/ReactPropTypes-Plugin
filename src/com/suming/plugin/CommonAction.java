@@ -71,13 +71,11 @@ abstract class CommonAction extends AnAction {
             showHint(editor, "The selected text is not a valid React Component ");
             return;
         }
-        // create a empty list
-        List<PropTypeBean> newPropNameList = new ArrayList<>();
         // find all use propTypes
         List<PropTypeBean> usePropNameList = findPropsNameList(component);
 
-        // add to new list
-        newPropNameList.addAll(usePropNameList);
+        //  create a empty list add use propTypes
+        List<PropTypeBean> newPropNameList = new ArrayList<>(usePropNameList);
 
         // filter exist list
         PsiElement expression = getPropTypeElementByName(file, selectedText);
@@ -95,6 +93,7 @@ abstract class CommonAction extends AnAction {
                             }
                             usePropType.setRequired(propTypeBean.isRequired);
                             usePropType.setShapePropTypeList(propTypeBean.getShapePropTypeList());
+                            usePropType.setJsonData(propTypeBean.getJsonData());
                             break;
                         }
                         if (i == usePropNameList.size() - 1) {
