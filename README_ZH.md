@@ -19,6 +19,22 @@
 #### 当你选择了`Shape`作为类型
 ![img](./ScreenShots/ScreenShot3.gif)
 
+## 如何构建和开发这个项目
+
+#### 依赖库
+* IntelliJ Platform Plugin SDK (官方插件SDK)
+* JavaScriptLanguage's lib (在macOS中, 路径是 /Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/lib, Windows类似)
+
+#### 构建步骤
+1. 下载最新的IntelliJ IDEA商业版
+2. Git拷贝项目并且用IDEA打开
+3. 删除默认的module，并且通过`ReactPropTypes.iml`这个文件来导入module
+4. 配置IntelliJ Platform Plugin SDK 和 language level 8
+5. 配置插件的构建目录
+
+#### 示例
+![img](./ScreenShots/ScreenShot3.gif)
+
 ## 特性
 1. 如果你没有选择任何文字，插件将自动找到高亮的文字作为选择的组件名称。
 1. 在ES6的标准组件中，插件通过找到以props和nextProps为对象名称的引用和解析赋值来找到属性名。

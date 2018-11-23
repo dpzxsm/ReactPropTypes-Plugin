@@ -22,6 +22,22 @@
 #### When you select `Shape` as the PropType
 ![img](./ScreenShots/ScreenShot3.gif)
 
+## How to Build and Development the project
+
+#### Dependency Library
+* IntelliJ Platform Plugin SDK
+* JavaScriptLanguage's lib (In macOS, the path is /Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/lib, Windows are similar)
+
+#### Development Step
+1. Download the latest IntelliJ IDEA Ultimate
+2. Clone and Open this project
+3. Delete default module and import plugin module by `ReactPropTypes.iml`
+4. Config Project SDK named IntelliJ IDEA IU-182.** and Config language level 8
+5. Config plugin out dir and plugin launch Configurations
+
+#### For Example
+![img](./ScreenShots/ScreenShot3.gif)
+
 ## Features
 1. Get a heightLight text as component's name if you are not select any text.
 1. In the Standard ES6 component, the plugin can distinguish  props's reference and destructuring assignment with keyword "props" or "nextProps".
