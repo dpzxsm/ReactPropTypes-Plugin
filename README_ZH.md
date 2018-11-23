@@ -33,7 +33,7 @@
 5. 配置插件的构建目录
 
 #### 示例
-![img](./ScreenShots/ScreenShot3.gif)
+![img](./ScreenShots/ScreenShot4.gif)
 
 ## 特性
 1. 如果你没有选择任何文字，插件将自动找到高亮的文字作为选择的组件名称。

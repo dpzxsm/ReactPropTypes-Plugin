@@ -36,7 +36,7 @@
 5. Config plugin out dir and plugin launch Configurations
 
 #### For Example
-![img](./ScreenShots/ScreenShot3.gif)
+![img](./ScreenShots/ScreenShot4.gif)
 
 ## Features
 1. Get a heightLight text as component's name if you are not select any text.
