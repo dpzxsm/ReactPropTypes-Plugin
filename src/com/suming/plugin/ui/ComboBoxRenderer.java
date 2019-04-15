@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
-public class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer{
+public class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 
     ComboBoxRenderer(boolean showAllType) {
         super(new String[]{
@@ -17,7 +17,6 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
                 "array",
                 "symbol",
                 "node",
-                "exact",
                 "element",
                 "arrayOf",
                 "objectOf",
@@ -25,8 +24,9 @@ public class ComboBoxRenderer extends JComboBox<String> implements TableCellRend
                 "instanceOf",
                 "oneOfType"
         });
-        if(showAllType){
-            this.addItem("shape");
+        if (showAllType) {
+            this.insertItemAt("shape", 10);
+            this.insertItemAt("exact", 11);
         }
         this.setMaximumRowCount(10);
         this.setEditable(false);

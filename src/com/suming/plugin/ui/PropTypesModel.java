@@ -71,7 +71,7 @@ class PropTypesModel extends DefaultTableModel {
                 HashMap extraData = (HashMap) o[4];
                 Object shapePropsObj = extraData.get("shapeProps");
                 PropTypeBean bean = new PropTypeBean(name, type, isRequired, defaultValue);
-                if (type != null && type.equals("shape") && shapePropsObj != null) {
+                if (type != null && (type.equals("shape") || type.equals("exact")) && shapePropsObj != null) {
                     List<BasePropType> shapePropList = ((List<?>) shapePropsObj).stream()
                             .map(e -> (BasePropType) e).collect(Collectors.toList());
                     bean.setShapePropTypeList(shapePropList);

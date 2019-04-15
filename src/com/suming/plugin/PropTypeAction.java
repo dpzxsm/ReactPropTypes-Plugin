@@ -185,9 +185,9 @@ public class PropTypeAction extends CommonAction {
         }
         for (int i = 0; i < beans.size(); i++) {
             sb.append(propsBlank).append(beans.get(i).name).append(": PropTypes.");
-            if ("shape".equals(beans.get(i).type)) {
+            if ("shape".equals(beans.get(i).type) || "exact".equals(beans.get(i).type)) {
                 List<BasePropType> shapePropList = beans.get(i).getShapePropTypeList();
-                sb.append("shape");
+                sb.append(beans.get(i).type);
                 if (shapePropList != null) {
                     int shapePropSize = shapePropList.size();
                     sb.append(shapePropSize > 0 ? "({\n" : "()");

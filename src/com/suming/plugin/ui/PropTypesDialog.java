@@ -74,7 +74,7 @@ public class PropTypesDialog extends JDialog {
             if (column == 1 && e.getFirstRow() == e.getLastRow()) {
                 int row = e.getFirstRow();
                 String type = model.getValueFromIndex(e.getColumn(), e.getFirstRow());
-                if (type.equals("shape")) {
+                if (type.equals("shape") || type.equals("exact")) {
                     String propName = (String) model.getValueAt(row, 0);
                     HashMap extraData = (HashMap) model.getValueAt(row, 4);
                     Object shapePropsObj = extraData.get("shapeProps");
