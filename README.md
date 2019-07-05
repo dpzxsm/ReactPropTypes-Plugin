@@ -11,7 +11,7 @@
    
 ## How to use
 1. Select your Component's name
-2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press shift + command + alt + P (Windows is shift + ctrl + alt + P) in the macOS
+2. Press command + N (Windows is alt + insert) show Generate Group and select PropTypesGenerate, or press shift + command + alt + O (Windows is shift + ctrl + alt + O) in the macOS
 3. Edit the PropTypes Table to modify default type
 
 ## Preview

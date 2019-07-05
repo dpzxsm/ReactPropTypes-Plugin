@@ -8,7 +8,7 @@
    
 ## 如何使用
 1. 选择组件名称
-2. 按下 command + N (Windows系统是alt + insert) 并且选择PropTypesGenerate, 或者按下shift + command + alt + P (Windows系统是shift + ctrl + alt + P) 在Mac系统中。
+2. 按下 command + N (Windows系统是alt + insert) 并且选择PropTypesGenerate, 或者按下shift + command + alt + O (Windows系统是shift + ctrl + alt + O) 在Mac系统中。
 3. 编辑弹框中的表格进行类型的修改稿
 
 ## 
