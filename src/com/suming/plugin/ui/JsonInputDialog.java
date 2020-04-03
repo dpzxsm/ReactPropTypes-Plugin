@@ -1,8 +1,8 @@
 package com.suming.plugin.ui;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.suming.plugin.bean.BasePropType;
 import com.suming.plugin.utils.PropTypesHelper;
 
@@ -54,24 +54,20 @@ public class JsonInputDialog extends JDialog {
     if( jsonStr != null && !jsonStr.trim().equals("")){
       try{
         List<BasePropType> basePropTypes = new ArrayList<>();
-        JsonParser parser = new JsonParser();
-        JsonElement element = parser.parse(jsonStr);
-        if(element instanceof JsonObject){
-          for (Object o : ((JsonObject) element).entrySet()) {
-            Map.Entry entry = (Map.Entry) o;
-            String name = entry.getKey().toString();
-            String value = entry.getValue().toString();
-            basePropTypes.add(new BasePropType(name, PropTypesHelper.getPropTypeByValue(value), false));
-          }
-          if(this.onSubmitListener != null){
-            this.onSubmitListener.onSubmit(basePropTypes);
-          }
-          dispose();
-        }else {
-          hintText.setText("Not a Json Object !");
+        Gson gson = new Gson();
+        JsonObject json = gson.fromJson(jsonStr, JsonObject.class);
+        System.out.println(json.toString());
+        for (Map.Entry<String, JsonElement> o : json.entrySet()) {
+          String name = o.getKey();
+          String value = o.getValue().toString();
+          basePropTypes.add(new BasePropType(name, PropTypesHelper.getPropTypeByValue(value), false));
         }
+        if(this.onSubmitListener != null){
+          this.onSubmitListener.onSubmit(basePropTypes);
+        }
+        dispose();
       } catch (Exception e){
-        System.out.println(e);
+        System.out.println(e.toString());
         hintText.setText("Incorrectly formatting !");
       }
     }else {
