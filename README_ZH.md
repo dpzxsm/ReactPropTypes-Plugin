@@ -1,4 +1,4 @@
-这是一个可以自动生成React组件的PropTypes代码的jetbrains插件，目前仅支持ES6、ES7。如果需要支持ES5，请在issue中留言。支持的平台有:IntelliJ IDEA、PhpStorm、WebStorm、PyCharm、RubyMine、AppCode、CLion、Gogland、Rider
+这是一个可以自动生成React组件的PropTypes代码的jetbrains插件，目前仅支持ES6、ES7。支持的平台有:IntelliJ IDEA、PhpStorm、WebStorm、PyCharm、RubyMine、AppCode、CLion、Gogland、Rider
 
 如果你想在VS Code或者通过命令行使用这个插件，建议你去使用另一个插件: [react-proptypes-generate](https://github.com/dpzxsm/react-proptypes-generate), 现在并不是很完美，欢迎issue和PR
 

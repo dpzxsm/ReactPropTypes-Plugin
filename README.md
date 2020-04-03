@@ -1,7 +1,7 @@
 # ReactPropTypes-Plugin
  <a href=https://github.com/dpzxsm/ReactPropTypes-Plugin/blob/master/README_ZH.md>中文文档</a>
  
- This is a JetBrains plug-in that automatically generates PropTypes code for React components, and only supports ES6 later at the moment. If you need to support ES5, please leave a message in issue.Compatible with: IntelliJ IDEA, PhpStorm, WebStorm, PyCharm, RubyMine, AppCode, CLion, Gogland, Rider.
+ This is a JetBrains plug-in that automatically generates PropTypes code for React components, and only supports ES6 later at the moment. Compatible with: IntelliJ IDEA, PhpStorm, WebStorm, PyCharm, RubyMine, AppCode, CLion, Gogland, Rider.
  
  If you are want use it by Visual Code or command line, I suggest you to use another plugin: [react-proptypes-generate](https://github.com/dpzxsm/react-proptypes-generate), now it is imperfect, welcome issue and PR.
 
