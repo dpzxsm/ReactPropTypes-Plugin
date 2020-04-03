@@ -245,7 +245,6 @@ abstract class CommonAction extends AnAction {
     }
 
     @NotNull
-    @SuppressWarnings(value = {"unchecked"})
     private List<PropTypeBean> findPropsNameList(Component component) {
         PsiElement psiElement = component.getElement();
         ComponentType componentType = component.getComponentType();
@@ -426,11 +425,6 @@ abstract class CommonAction extends AnAction {
                 .orElse(null);
     }
 
-    @Nullable
-    private PsiElement getES5PropTypeElementByName(PsiFile file, String componentName) {
-        return null;
-    }
-
     /**
      * Find defaultProps Object and to PropTypeBean List
      */
@@ -459,12 +453,7 @@ abstract class CommonAction extends AnAction {
     private PsiElement getDefaultPropsElementByName(PsiFile file, String componentName) {
         PsiElement es7Element = getES7FieldElementByName(file, componentName, "defaultProps");
         if (es7Element == null) {
-            PsiElement es6Element = getES6FieldByName(file, componentName, "defaultProps");
-            if (es6Element == null) {
-                return getES5PropTypeElementByName(file, componentName);
-            } else {
-                return es6Element;
-            }
+            return getES6FieldByName(file, componentName, "defaultProps");
         } else {
             return es7Element;
         }
@@ -499,12 +488,7 @@ abstract class CommonAction extends AnAction {
         // ES7 is ES6Field , ES6 is JSDefinitionExpression, ES5 is JSField
         PsiElement es7Element = getES7FieldElementByName(file, componentName, "propTypes");
         if (es7Element == null) {
-            PsiElement es6Element = getES6FieldByName(file, componentName, "propTypes");
-            if (es6Element == null) {
-                return getES5PropTypeElementByName(file, componentName);
-            } else {
-                return es6Element;
-            }
+            return getES6FieldByName(file, componentName, "propTypes");
         } else {
             return es7Element;
         }

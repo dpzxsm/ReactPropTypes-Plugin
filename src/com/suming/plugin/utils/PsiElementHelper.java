@@ -21,20 +21,6 @@ public class PsiElementHelper {
         return null;
     }
 
-    public static PsiElement getRealNextElement (PsiElement p){
-        PsiElement p1 = p.getNextSibling();
-        if(p1 !=null){
-            if(!(p1 instanceof PsiWhiteSpace)){
-                return  p1;
-            }
-            PsiElement p2 = p1.getNextSibling();
-            if(p2 !=null && !( p2 instanceof PsiWhiteSpace)){
-                return  p2;
-            }
-        }
-        return null;
-    }
-
     public static PsiElement getRealFirstChild (ES6Class es6Class){
         PsiElement[] children = es6Class.getChildren();
         if(children.length>2){

@@ -22,7 +22,7 @@ public class SettingService implements PersistentStateComponent<Setting> {
     }
 
     @Override
-    public void loadState(Setting setting) {
+    public void loadState(@NotNull Setting setting) {
        this.mSetting = setting;
     }
 }

@@ -2,7 +2,7 @@ package com.suming.plugin.utils;
 
 import com.intellij.openapi.application.ApplicationInfo;
 
-@SuppressWarnings({"SpellCheckingInspection", "WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class IdeaCompat {
 
     public static final int BUILD_NUMBER = ApplicationInfo.getInstance().getBuild().getBaselineVersion();

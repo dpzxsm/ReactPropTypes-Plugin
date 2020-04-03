@@ -19,6 +19,7 @@ public class PropTypesHelper {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
+    @SafeVarargs
     public static <T> Comparator<T> sortByKey(Set<Integer> reverseSet, Function<? super T, ?>... keyExtractors) {
         return (o1, o2) -> {
             for (int i = 0; i < keyExtractors.length; i++) {
@@ -37,26 +38,20 @@ public class PropTypesHelper {
     public static boolean isBool(String str) {
         Pattern pattern = Pattern.compile("true|false");
         Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
-            return false;
-        }
-        return true;
+        return isNum.matches();
     }
 
     public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("-?[0-9]+.?[0-9]*");
         Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
-            return false;
-        }
-        return true;
+        return isNum.matches();
     }
 
     public static String getPropTypeByValue(String value) {
         String type = "any";
         if (value.startsWith("\"") && value.endsWith("\"")) {
             type = "string";
-        } else if (value.startsWith("\'") && value.endsWith("\'")) {
+        } else if (value.startsWith("'") && value.endsWith("'")) {
             type = "string";
         } else if (value.startsWith("{") && value.endsWith("}")) {
             type = "object";

@@ -7,17 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@SuppressWarnings("SpellCheckingInspection")
 public final class SelectWordUtilCompat {
 
     private SelectWordUtilCompat() {
     }
 
-    public static final SelectWordUtil.CharCondition JAVASCRIPT_IDENTIFIER_PART_CONDITION = new SelectWordUtil.CharCondition() {
-        public boolean value(char var1) {
-            return  var1 != ' ';
-        }
-    };
+    public static final SelectWordUtil.CharCondition JAVASCRIPT_IDENTIFIER_PART_CONDITION = var1 -> var1 != ' ';
 
 
     public static void addWordOrLexemeSelection(boolean camel,

@@ -65,11 +65,11 @@ public class PropTypeAction extends CommonAction {
         if (!hasImportPropTypes(file)) {
             int firstImportIndex = findFirstImportIndex(file);
             if (isNew) {
-                document.insertString(firstImportIndex, "import PropTypes from \'prop-types\'\n");
+                document.insertString(firstImportIndex, "import PropTypes from 'prop-types'\n");
             } else {
                 ES6ImportDeclaration reactImport = getReactImportDeclaration(file);
                 if (reactImport == null) {
-                    document.insertString(firstImportIndex, "import React, {PropTypes} from \'react\'\n");
+                    document.insertString(firstImportIndex, "import React, {PropTypes} from 'react'\n");
                 } else {
                     if (reactImport.getFromClause() == null) return;
                     PsiElement pFrom = reactImport.getFromClause();
