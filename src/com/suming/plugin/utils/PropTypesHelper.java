@@ -106,7 +106,7 @@ public class PropTypesHelper {
             if (m.matches() && m.group(1) != null) {
                 BasePropType bean = new BasePropType(m.group(1), m.group(3) == null ? "any" : m.group(3),
                         m.group(6) != null);
-                if(m.group(5) != null){
+                if (m.group(5) != null) {
                     bean.setJsonData(m.group(5));
                 }
                 shapePropList.add(bean);

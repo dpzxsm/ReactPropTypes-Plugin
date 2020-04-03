@@ -51,7 +51,7 @@ abstract class CommonAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = getEventProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
@@ -203,18 +203,17 @@ abstract class CommonAction extends AnAction {
         }
     }
 
-    @Nullable
     boolean hasImportPropTypes(PsiFile file) {
         boolean hasNew = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
                 .stream()
-                .filter(o -> o.getText().contains("\'prop-types\'"))
-                .map(Objects::nonNull)
+                .filter(o -> o.getText().contains("'prop-types'"))
+                .map(obj -> true)
                 .reduce(false, (a, b) -> a || b);
         boolean hasOld = PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
                 .stream()
-                .filter(o -> o.getText().contains("\'react\'"))
+                .filter(o -> o.getText().contains("'react'"))
                 .filter(o -> o.getParent().getText().contains("PropTypes"))
-                .map(Objects::nonNull)
+                .map(obj -> true)
                 .reduce(false, (a, b) -> a || b);
         return hasNew || hasOld;
     }
@@ -223,7 +222,7 @@ abstract class CommonAction extends AnAction {
     ES6ImportDeclaration getReactImportDeclaration(PsiFile file) {
         return PsiTreeUtil.findChildrenOfType(file, ES6FromClause.class)
                 .stream()
-                .filter(o -> o.getText().contains("\'react\'"))
+                .filter(o -> o.getText().contains("'react'"))
                 .filter(o -> o.getParent() instanceof ES6ImportDeclaration)
                 .map(o -> (ES6ImportDeclaration) o.getParent())
                 .findFirst()
@@ -246,6 +245,7 @@ abstract class CommonAction extends AnAction {
     }
 
     @NotNull
+    @SuppressWarnings(value = {"unchecked"})
     private List<PropTypeBean> findPropsNameList(Component component) {
         PsiElement psiElement = component.getElement();
         ComponentType componentType = component.getComponentType();
@@ -266,8 +266,6 @@ abstract class CommonAction extends AnAction {
         } else if (componentType == ComponentType.STANDARD) {
             paramList.addAll(findPropsNameListByPropsIdentity("props", psiElement));
             paramList.addAll(findPropsNameListByPropsIdentity("nextProps", psiElement));
-        } else {
-            // ES5 is not supported for the time being
         }
         // maybe have duplicate data, so must distinct
         HashSet<Integer> reverseSet = new HashSet<>();
@@ -326,11 +324,9 @@ abstract class CommonAction extends AnAction {
                 .filter(o -> {
                     if (o.getParent() instanceof JSReferenceExpressionImpl) {
                         JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
-                        if (parent.getParent() instanceof JSDestructuringElementImpl
+                        return parent.getParent() instanceof JSDestructuringElementImpl
                                 && parent.getParent().getFirstChild() instanceof JSDestructuringObjectImpl
-                                && parent.getParent().getParent() != null) {
-                            return true;
-                        }
+                                && parent.getParent().getParent() != null;
                     }
                     return false;
                 })
@@ -364,7 +360,7 @@ abstract class CommonAction extends AnAction {
             bean.setType("func");
         } else {
             String arrayFuncString = Arrays.stream(ArrayFunctions.values())
-                    .map(o -> (o.name()))
+                    .map(Enum::name)
                     .reduce("", (a, b) -> a + '|' + b);
             String arrayReg = firstReg + bean.name + "\\s*\\.\\s*" + arrayFuncString.replaceFirst("^\\|", "(") + ")" + ".*";
             String objectReq = firstReg + bean.name + "\\s*\\.\\s*.*";
@@ -394,10 +390,8 @@ abstract class CommonAction extends AnAction {
                 .filter(o -> {
                     if (o.getParent() instanceof JSReferenceExpressionImpl) {
                         JSReferenceExpressionImpl parent = (JSReferenceExpressionImpl) o.getParent();
-                        if (parent.getTreeNext() != null && parent.getTreeNext().getElementType().toString().equals("JS:DOT")
-                                && parent.getTreeNext().getTreeNext() != null) {
-                            return true;
-                        }
+                        return parent.getTreeNext() != null && parent.getTreeNext().getElementType().toString().equals("JS:DOT")
+                                && parent.getTreeNext().getTreeNext() != null;
                     }
                     return false;
                 })
@@ -439,9 +433,6 @@ abstract class CommonAction extends AnAction {
 
     /**
      * Find defaultProps Object and to PropTypeBean List
-     *
-     * @param expression
-     * @return
      */
     @NotNull
     List<PropTypeBean> findPropsNameListInDefaultPropsElement(PsiElement expression) {
@@ -463,10 +454,6 @@ abstract class CommonAction extends AnAction {
 
     /**
      * Find defaultProps Object from a JS File with componentName
-     *
-     * @param file
-     * @param componentName
-     * @return
      */
     @Nullable
     private PsiElement getDefaultPropsElementByName(PsiFile file, String componentName) {
@@ -485,9 +472,6 @@ abstract class CommonAction extends AnAction {
 
     /**
      * Find propTypes Object and to PropTypeBean List
-     *
-     * @param expression
-     * @return
      */
     @NotNull
     List<PropTypeBean> findPropsNameListInPropTypeObject(PsiElement expression) {
@@ -509,10 +493,6 @@ abstract class CommonAction extends AnAction {
 
     /**
      * Find propTypes Object from a JS File with componentName
-     *
-     * @param file
-     * @param componentName
-     * @return
      */
     @Nullable
     private PsiElement getPropTypeElementByName(PsiFile file, String componentName) {
