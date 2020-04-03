@@ -256,8 +256,11 @@ abstract class CommonAction extends AnAction {
             if (propsParam != null) {
                 if (propsParam instanceof JSDestructuringParameter) {
                     JSDestructuringElement parent = (JSDestructuringElement) propsParam;
-                    JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
-                    paramList.addAll(getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent()));
+                    for (PsiElement child : parent.getChildren()) {
+                        if (child instanceof JSDestructuringObject) {
+                            paramList.addAll(getPropsWithDestructuringProperty((JSDestructuringObject) child, parent.getParent().getParent()));
+                        }
+                    }
                 } else {
                     paramList.addAll(findPropsNameListByPropsIdentity(propsParam.getName(), psiElement));
                 }
@@ -330,7 +333,7 @@ abstract class CommonAction extends AnAction {
                     return false;
                 })
                 .map(o -> {
-                    JSDestructuringElementImpl parent = (JSDestructuringElementImpl) o.getParent().getParent();
+                    PsiElement parent = o.getParent().getParent();
                     JSDestructuringObject destructuringObject = (JSDestructuringObject) parent.getFirstChild();
                     return getPropsWithDestructuringProperty(destructuringObject, parent.getParent().getParent());
                 })
